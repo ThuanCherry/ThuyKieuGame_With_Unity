@@ -1,0 +1,47 @@
+# ---- Unity generated: KHONG BAO GIO commit ----
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+/.vs/
+/.vsconfig
+/.idea/
+/.gradle/
+/ExportedObj/
+
+# ---- IDE project files: Unity tu sinh lai ----
+*.csproj
+*.unityproj
+*.sln
+*.slnx
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# ---- Build artifacts ----
+*.apk
+*.aab
+*.unitypackage
+*.app
+crashlytics-build.properties
+
+# ---- He dieu hanh ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- Anh chup tam cua tool ----
+/Assets/Screenshots/
+/Assets/Screenshots.meta
