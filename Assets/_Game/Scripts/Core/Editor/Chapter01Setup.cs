@@ -238,6 +238,7 @@ namespace ThuyKieu.Core.Editor
             template.gameObject.SetActive(false);
             Set(ui, "dialoguePanel", panel.gameObject); Set(ui, "_speakerText", speaker); Set(ui, "_bodyText", body);
             Set(ui, "continueButton", next); Set(ui, "choicesRoot", choices); Set(ui, "choiceButtonPrefab", template);
+            ThuyKieu.UI.Editor.Chapter01DialogueStyle.Apply(ui);
 
             var objective = Text(go.transform, "Objective", "CHƯƠNG 1 — GIA BIẾN", 30, new Vector2(0.03f, 0.90f), new Vector2(0.8f, 0.97f));
             Text(go.transform, "Controls", "WASD: đi · Shift: chạy · Chuột: camera · E: tương tác", 22, new Vector2(0.03f, 0.85f), new Vector2(0.9f, 0.9f));

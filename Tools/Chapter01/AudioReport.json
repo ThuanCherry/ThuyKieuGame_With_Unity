@@ -1,0 +1,15 @@
+{
+  "completed": true,
+  "passed": true,
+  "checks": [
+    "PASS: One active listener",
+    "PASS: Listener unmuted",
+    "PASS: MusicSource plays audible loop",
+    "PASS: RainSource plays audible loop",
+    "PASS: WindSource plays audible loop",
+    "PASS: Door opening plays",
+    "PASS: Door closing plays",
+    "PASS: UI confirmation plays",
+    "PASS: Contract paper cue plays"
+  ]
+}

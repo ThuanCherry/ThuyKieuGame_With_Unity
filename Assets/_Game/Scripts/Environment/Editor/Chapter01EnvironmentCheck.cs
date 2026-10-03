@@ -23,6 +23,7 @@ namespace ThuyKieu.Environment.Editor
         private static Keyboard _keyboard, _previousKeyboard;
         private static InputSettings.BackgroundBehavior _background;
         private static bool _runInBackground, _moving;
+        private static bool _heardWood, _heardStone;
         private static int _phase, _waypoint;
         private static float _start;
         private static Vector3 _origin;
@@ -37,7 +38,7 @@ namespace ThuyKieu.Environment.Editor
             _camera=UnityEngine.Object.FindAnyObjectByType<ThirdPersonCameraController>();
             _director=UnityEngine.Object.FindAnyObjectByType<Chapter01Director>();
             if(_player==null||_director==null)throw new InvalidOperationException("Chapter 1 is not loaded.");
-            _report=new Report(); _phase=0;_waypoint=0;_moving=false;_start=Time.time;_origin=_player.transform.position;
+            _report=new Report(); _phase=0;_waypoint=0;_moving=false;_heardWood=false;_heardStone=false;_start=Time.time;_origin=_player.transform.position;
             _previousKeyboard=Keyboard.current;_keyboard=InputSystem.AddDevice<Keyboard>();
             _background=InputSystem.settings.backgroundBehavior;_runInBackground=Application.runInBackground;
             InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;Application.runInBackground=true;
@@ -71,6 +72,12 @@ namespace ThuyKieu.Environment.Editor
                         Check(!_player.ControlLocked,"Environment traversal starts after existing opening unlock");
                         _camera.enabled=false;_phase=1;_start=Time.time;break;
                     case 1:
+                        var footsteps=UnityEngine.Object.FindAnyObjectByType<Chapter01Audio>().GetComponentsInChildren<AudioSource>().First(s=>s.name=="FootstepSource");
+                        if(footsteps.isPlaying)
+                        {
+                            bool inside=Mathf.Abs(_player.transform.position.x)<6.3f&&_player.transform.position.z>-3.2f;
+                            _heardWood|=inside;_heardStone|=!inside;
+                        }
                         Vector3 direction=_route[_waypoint]-_player.transform.position;direction.y=0;
                         if(_player.transform.position.y<-.15f||_player.transform.position.y>.3f)throw new InvalidOperationException("Floor grounding lost: "+_player.transform.position);
                         if(direction.magnitude<.18f)
@@ -78,7 +85,12 @@ namespace ThuyKieu.Environment.Editor
                             Check(true,RouteNames[_waypoint]+" reachable using W and CharacterController");
                             if(_waypoint==11)Check(UnityEngine.Object.FindAnyObjectByType<ProximityDoor>().IsOpen,"Main door is open before passing the threshold");
                             _waypoint++;_start=Time.time;_moving=false;
-                            if(_waypoint==_route.Length){_phase=2;Cue("Reveal_MaGiamSinh");_camera.enabled=true;}
+                            if(_waypoint==_route.Length)
+                            {
+                                Check(_heardWood,"Wood footsteps play during indoor traversal");
+                                Check(_heardStone,"Stone footsteps play during courtyard traversal");
+                                _phase=2;Cue("Reveal_MaGiamSinh");_camera.enabled=true;
+                            }
                             return;
                         }
                         Camera.main.transform.rotation=Quaternion.LookRotation(direction);_moving=true;break;
@@ -111,8 +123,9 @@ namespace ThuyKieu.Environment.Editor
             Check(sources.Where(s=>s.name=="MusicSource"||s.name=="RainSource"||s.name=="WindSource").All(s=>s.loop&&s.spatialBlend==0),"Music and ambience are quiet 2D loops");
             Check(sources.Where(s=>s.name=="SFXSource"||s.name=="FootstepSource").All(s=>s.spatialBlend==1),"Localized door/paper/footsteps use 3D audio");
             Check(sources.First(s=>s.name=="UISource").spatialBlend==0,"UI audio is 2D");
-            Check(sources.All(s=>s.clip!=null||!s.isPlaying),"Missing audio clips remain silent without runtime errors");
-            Check(AssetDatabase.FindAssets("t:AudioClip",new[]{"Assets"}).Length==0,"Audio audit: no real AudioClip available; placeholders are explicit");
+            Check(sources.Where(s=>s.name=="MusicSource"||s.name=="RainSource"||s.name=="WindSource").All(s=>s.clip!=null&&s.isPlaying),"Music, rain and wind clips play at runtime");
+            var serializedAudio=new SerializedObject(audio);
+            Check(new[]{"_paper","_doorOpen","_doorClose","_uiConfirm","_woodStep","_stoneStep"}.All(field=>serializedAudio.FindProperty(field).objectReferenceValue!=null),"All six interaction and footstep clips assigned");
             bool sheltered=true;
             foreach(float x in new[]{-4f,0,4f}) foreach(float z in new[]{-1f,2f,5f})
                 sheltered &= Physics.Raycast(new Vector3(x,2.7f,z),Vector3.up,out var roofHit,4,1<<8)

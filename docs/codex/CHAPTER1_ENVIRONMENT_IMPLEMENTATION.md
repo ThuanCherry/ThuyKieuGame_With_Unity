@@ -60,29 +60,62 @@ The existing third-person camera and dialogue presets remain. The wide shot now 
 the covered hall. Dialogue camera movement also checks environment obstruction, including
 player-relative close-up/ending presets.
 
-## Audio audit and hooks
+## Audio implementation
 
-The complete Assets filename scan and Unity AssetDatabase AudioClip scan found **zero audio clips**.
-Consequently no music, rain recording, wind, door, paper, footstep or UI sound is currently played.
-No audio was downloaded or synthesized. There is no voice acting.
+The initial environment pass contained no audio clips. The audio pass now adds nine original
+locally synthesized WAV clips under `Assets/_Game/Audio/Chapter01`, assigned and saved in the
+Chapter 1 scene. No audio was downloaded and there is no voice acting.
+These are designed effects and a synthesized bowed pad, rather than recorded instruments or ambience.
 
 `VuongGia/EnvironmentAudio` contains one scene-local Chapter01Audio component and six sources:
 
 | Source | Purpose | Defaults |
 | --- | --- | --- |
-| MusicSource | Assign restrained sad/strings music | 2D loop, volume 0.18 |
-| RainSource | Assign rain loop | 2D loop, 0.13 indoors / 0.28 outdoors |
-| WindSource | Assign wind ambience | 2D loop, 0.025 indoors / 0.07 outdoors |
+| MusicSource | SadStrings: restrained D-minor pad and melody | 2D loop, volume 0.18 |
+| RainSource | Rain: diffuse rain and roof droplets | 2D loop, 0.13 indoors / 0.28 outdoors |
+| WindSource | Wind: filtered gust ambience | 2D loop, 0.025 indoors / 0.07 outdoors |
 | SFXSource | Door open/close and contract paper | 3D, volume 0.4 |
 | UISource | Continue and choice confirmation | 2D, volume 0.2 |
 | FootstepSource | Wood/stone footsteps while grounded | 3D, volume 0.25 |
 
-Music/rain/wind can be assigned to their source clip slots. Other clips are exposed on
-Chapter01Audio. Hooks already follow Ink music/camera cues, door proximity, UI input, player
-grounding and distance walked. Empty slots are silent. No global AudioManager was introduced.
+Music/rain/wind are assigned to their source clip slots. Paper, DoorOpen, DoorClose,
+UIConfirm, WoodStep and StoneStep are assigned on Chapter01Audio. Hooks follow Ink music/camera
+cues, door proximity, UI input, player grounding and distance walked. Repeated music cues
+preserve playback instead of restarting the loop. No global AudioManager was introduced.
+
+`Tools/Chapter01/GenerateAudio.py` reproduces the 44.1 kHz / 16-bit mono WAV files with NumPy.
+No Python dependency is needed by Unity or the player. `Chapter01AudioSetup` and the menu
+`ThuyKieu/Chapter 1/Assign audio` restore assignments without rebuilding the environment.
+The environment setup also retains these assignments when reapplied.
+
+### Compact dialogue presentation
+
+Dialogue uses a dark navy background with opacity 0.62, separate bright edge borders,
+light text and TMP SDF underlay drop shadows. Separate borders avoid compositing copies
+of the whole translucent panel as Unity's Image Outline would do.
+The panel occupies 76% of the screen width and sizes its height to the line and choices.
+Text reveals at 48 characters/second. Space/Enter or Continue first completes a revealing
+line, then advances on the next press. Choice buttons and number shortcuts remain available.
+A tenth clip, `DialogueLetter.wav`, plays through UISource for letters/digits,
+limited to one tick per 55 ms. Spaces and punctuation are silent; skipping or closing a
+line stops the reveal. The tick is 50 ms at 880 Hz, peak 0.8, with `_dialogueLetterVolume`
+set to 0.95 (Inspector adjustable). This raises the effective peak from 0.0225 to 0.152
+with the existing UISource volume 0.2, making it clearer above the ambience.
+`Chapter01DialogueStyle` supplies the saved scene style and setup defaults;
+`Assets/_Game/UI/Materials/DialogueTextShadow.mat` supplies the shadow without editing the font material.
+Presentation checks and previews: `Tools/Chapter01/DialoguePresentationReport.json`,
+`DialogueCompact.png`, `DialogueNavyChoices.png`.
+The presentation check passed 15/15 cases covering Vietnamese reveal, letter audio,
+skip/advance behavior, three choices, text bounds and closing the panel.
+The audio check measured UISource PCM output during reveal (peak sampled RMS 0.0500),
+as well as validating the clip and source gain. Physical speaker/headphone playback is not captured.
 
 ## Files created
 
+- `Assets/_Game/Audio/Chapter01/`: nine WAV clips and provenance/reproduction README.
+- `Assets/_Game/Scripts/Environment/Editor/Chapter01AudioSetup.cs`
+- `Tools/Chapter01/GenerateAudio.py`, `ApplyAudio.cs`, `CheckAudio.cs`,
+  `AudioVerificationState.cs`, `AudioReport.json`.
 - `Assets/_Game/Scripts/Environment/Chapter01Atmosphere.cs`
 - `Assets/_Game/Scripts/Environment/Chapter01Audio.cs`
 - `Assets/_Game/Scripts/Environment/Editor/Chapter01EnvironmentSetup.cs`
@@ -109,11 +142,16 @@ grounding and distance walked. Empty slots are silent. No global AudioManager wa
 ## Verification
 
 Unity recompilation passed with zero errors and warnings. The environment test passed
-**43/43 checks** and the Chapter 1 regression test passed **100/100 checks** on this scene.
+**45/45 checks** and the Chapter 1 regression test passed **103/103 checks** after the audio pass.
+The dedicated audio check passed **9/9 checks**, covering the listener, three loops, door opening
+and closing, UI confirmation and the contract paper cue. Environment traversal additionally
+confirmed wood and stone footsteps playing through the actual player movement system.
+All nine PCM files were checked for nonzero audio samples. Playback checks verify Unity state;
+perceived sound quality still needs listening on the user's speakers/headphones.
 The completed regression run reached Chapter02_Placeholder. No runtime errors were reported.
 No standalone player build was performed.
 
-Results are recorded in `Tools/Chapter01/EnvironmentReport.json` and `PlayModeReport.json`.
+Results are recorded in `Tools/Chapter01/AudioReport.json`, `EnvironmentReport.json` and `PlayModeReport.json`.
 The environment check traverses both NPC approaches, all sides of the table, the side area,
 door, courtyard and gate using the actual Input System and CharacterController, then verifies
 rain bounds, lighting cues and camera collision. The existing chapter check covers all six
@@ -124,7 +162,7 @@ Start a fresh Play session for `Chapter01PlayModeCheck.Start()`.
 
 ## Remaining placeholders and limits
 
-- All audio requires real clips; these are explicit empty hooks permitted by the environment brief.
+- Audio uses original synthesized assets; recorded instruments, field ambience and voice acting are not included.
 - Main-hall roof, trim, screens, paving, lanterns and parchment use modular primitive geometry.
 - Puddles suggest wetness; there is no water simulation or planar reflection.
 - Imported environment models are relatively dense (roughly 0.3M vertices for many source props);

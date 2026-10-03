@@ -1,0 +1,21 @@
+{
+    "completed": true,
+    "passed": true,
+    "checks": [
+        "PASS: New line starts hidden",
+        "PASS: Vietnamese characters reveal progressively",
+        "PASS: Letter sounds play with rate limiting",
+        "PASS: Letter audio has clear signal level through unmuted 2D source",
+        "PASS: Letter sound produces measured PCM output during reveal: RMS=0.0500",
+        "PASS: First continue reveals all without advancing",
+        "PASS: Translucent navy panel at 40-70 percent opacity with light text",
+        "PASS: Light edge border preserves transparency and TMP drop shadow enabled",
+        "PASS: Ordinary line uses compact panel",
+        "PASS: Vietnamese line fits panel",
+        "PASS: Skipping reveal stops letter sounds",
+        "PASS: Second continue advances dialogue",
+        "PASS: Three choices and long line fit",
+        "PASS: Choice labels remain readable",
+        "PASS: Closing dialogue stops reveal"
+    ]
+}

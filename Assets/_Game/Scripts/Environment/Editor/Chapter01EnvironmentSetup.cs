@@ -165,6 +165,19 @@ namespace ThuyKieu.Environment.Editor
                 source.playOnAwake=false; source.loop=i<3; source.volume=volumes[i]; source.spatialBlend=i==3||i==5?1:0;
                 source.minDistance=1; source.maxDistance=12; source.rolloffMode=AudioRolloffMode.Linear; Set(audio,fields[i],source);
             }
+            string[] loops={"SadStrings","Rain","Wind"};
+            for(int i=0;i<loops.Length;i++)
+            {
+                var clip=AssetDatabase.LoadAssetAtPath<AudioClip>(Chapter01AudioSetup.AudioFolder+loops[i]+".wav");
+                if(clip!=null)parent.Find(names[i]).GetComponent<AudioSource>().clip=clip;
+            }
+            string[] clipFields={"_paper","_doorOpen","_doorClose","_uiConfirm","_woodStep","_stoneStep","_dialogueLetter"};
+            string[] clips={"Paper","DoorOpen","DoorClose","UIConfirm","WoodStep","StoneStep","DialogueLetter"};
+            for(int i=0;i<clips.Length;i++)
+            {
+                var clip=AssetDatabase.LoadAssetAtPath<AudioClip>(Chapter01AudioSetup.AudioFolder+clips[i]+".wav");
+                if(clip!=null)Set(audio,clipFields[i],clip);
+            }
             return audio;
         }
         private static void ConfigureLighting(Chapter01Audio audio)
