@@ -1,0 +1,142 @@
+{
+    "completed": true,
+    "passed": true,
+    "checks": [
+        {
+            "name": "Idle and ground contact",
+            "passed": true,
+            "speed": 0.0,
+            "animatorSpeed": 0.0,
+            "position": "(0.000, 0.000, 0.000)",
+            "detail": ""
+        },
+        {
+            "name": "One Humanoid model; root motion disabled",
+            "passed": true,
+            "speed": 0.0,
+            "animatorSpeed": 0.0,
+            "position": "(0.000, 0.000, 0.000)",
+            "detail": ""
+        },
+        {
+            "name": "Required mapped Humanoid bones",
+            "passed": true,
+            "speed": 0.0,
+            "animatorSpeed": 0.0,
+            "position": "(0.000, 0.000, 0.000)",
+            "detail": ""
+        },
+        {
+            "name": "W walks forward",
+            "passed": true,
+            "speed": 2.500047445297241,
+            "animatorSpeed": 0.49999135732650757,
+            "position": "(0.000, 0.025, 2.251)",
+            "detail": ""
+        },
+        {
+            "name": "Locomotion time advances without per-frame restart",
+            "passed": true,
+            "speed": 2.500047445297241,
+            "animatorSpeed": 0.49999135732650757,
+            "position": "(0.000, 0.025, 2.251)",
+            "detail": ""
+        },
+        {
+            "name": "A walks left and turns",
+            "passed": true,
+            "speed": 2.5000479221343994,
+            "animatorSpeed": 0.4999997615814209,
+            "position": "(-2.252, 0.025, 0.000)",
+            "detail": ""
+        },
+        {
+            "name": "S walks backward and turns",
+            "passed": true,
+            "speed": 2.5000081062316895,
+            "animatorSpeed": 0.49999958276748657,
+            "position": "(0.000, 0.025, -2.256)",
+            "detail": ""
+        },
+        {
+            "name": "D walks right and turns",
+            "passed": true,
+            "speed": 2.499969482421875,
+            "animatorSpeed": 0.49999937415122986,
+            "position": "(2.256, 0.025, 0.000)",
+            "detail": ""
+        },
+        {
+            "name": "Shift runs at code-controlled speed",
+            "passed": true,
+            "speed": 5.499889373779297,
+            "animatorSpeed": 0.9999873638153076,
+            "position": "(0.000, 0.025, 4.954)",
+            "detail": ""
+        },
+        {
+            "name": "Diagonal does not gain speed",
+            "passed": true,
+            "speed": 2.5000040531158447,
+            "animatorSpeed": 0.5000078082084656,
+            "position": "(1.595, 0.025, 1.595)",
+            "detail": ""
+        },
+        {
+            "name": "Released input returns to Idle",
+            "passed": true,
+            "speed": 0.0,
+            "animatorSpeed": 0.00000775954504206311,
+            "position": "(1.595, 0.025, 1.595)",
+            "detail": ""
+        },
+        {
+            "name": "Wall blocks movement and actual velocity returns Idle",
+            "passed": true,
+            "speed": 0.0,
+            "animatorSpeed": 0.0000010705080057960004,
+            "position": "(0.000, 0.025, 7.475)",
+            "detail": ""
+        },
+        {
+            "name": "Gravity lands on floor",
+            "passed": true,
+            "speed": 0.0,
+            "animatorSpeed": 1.7038868579954958e-11,
+            "position": "(0.000, 0.025, 0.000)",
+            "detail": ""
+        },
+        {
+            "name": "C safely ignored without crouch clips",
+            "passed": true,
+            "speed": 0.0,
+            "animatorSpeed": 2.665263548616337e-16,
+            "position": "(0.000, 0.025, 0.000)",
+            "detail": ""
+        },
+        {
+            "name": "Talk trigger uses existing clip",
+            "passed": true,
+            "speed": 0.0,
+            "animatorSpeed": 6.190379789657476e-21,
+            "position": "(0.000, 0.025, 0.000)",
+            "detail": ""
+        },
+        {
+            "name": "Pickup trigger uses non-looping clip",
+            "passed": true,
+            "speed": 0.0,
+            "animatorSpeed": 1.010393755005834e-25,
+            "position": "(0.000, 0.025, 0.000)",
+            "detail": ""
+        },
+        {
+            "name": "Pickup returns to locomotion",
+            "passed": true,
+            "speed": 0.0,
+            "animatorSpeed": 1.1070257868166055e-43,
+            "position": "(0.000, 0.025, 0.000)",
+            "detail": ""
+        }
+    ]
+}

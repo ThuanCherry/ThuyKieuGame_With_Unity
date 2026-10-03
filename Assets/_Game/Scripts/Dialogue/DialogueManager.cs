@@ -20,10 +20,18 @@ namespace ThuyKieu.Dialogue
         /// <summary>Index of the line being shown inside CurrentNode.</summary>
         public int CurrentLineIndex { get; private set; }
 
-        public bool IsDialogueActive => CurrentNode != null;
+        public Ink.Runtime.Story InkStory { get; private set; }
+        private bool _inkActive;
+        private string _pendingText;
+        private string[] _pendingTags;
+        private string _inkSpeaker = "Dẫn chuyện";
+        public Func<string[], bool> InkPauseBeforeLine;
+        public Func<string[], bool> InkStopBeforeLine;
+        public event Action<string[]> InkTagsChanged;
+        public bool IsDialogueActive => _inkActive || CurrentNode != null;
 
         /// <summary>True when the last line of the node is on screen and choices should show.</summary>
-        public bool IsAtChoicePoint => IsDialogueActive
+        public bool IsAtChoicePoint => _inkActive ? InkStory.currentChoices.Count > 0 : IsDialogueActive
                                        && CurrentNode.HasChoices
                                        && CurrentLineIndex >= CurrentNode.Lines.Count - 1;
 
@@ -91,6 +99,11 @@ namespace ThuyKieu.Dialogue
         /// <summary>Continue button / continue key. Advances one line, or closes at the end.</summary>
         public void Advance()
         {
+            if (_inkActive)
+            {
+                if (!IsAtChoicePoint) AdvanceInk();
+                return;
+            }
             if (!IsDialogueActive)
             {
                 return;
@@ -115,6 +128,13 @@ namespace ThuyKieu.Dialogue
         /// <summary>Follows a branch. Index refers to CurrentNode.Choices.</summary>
         public void SelectChoice(int choiceIndex)
         {
+            if (_inkActive)
+            {
+                if (choiceIndex < 0 || choiceIndex >= InkStory.currentChoices.Count) return;
+                InkStory.ChooseChoiceIndex(choiceIndex);
+                AdvanceInk();
+                return;
+            }
             if (!IsDialogueActive || !CurrentNode.HasChoices)
             {
                 return;
@@ -148,6 +168,7 @@ namespace ThuyKieu.Dialogue
             }
 
             CurrentNode = null;
+            _inkActive = false;
             CurrentLineIndex = 0;
 
             if (ChoicesChanged != null)
@@ -198,6 +219,78 @@ namespace ThuyKieu.Dialogue
             {
                 ChoicesChanged(new DialogueChoice[0]);
             }
+        }
+
+        public void SetInkStory(Ink.Runtime.Story story)
+        {
+            if (IsDialogueActive) throw new InvalidOperationException("End the active conversation before changing Ink story.");
+            InkStory = story;
+            _pendingText = null;
+            _pendingTags = null;
+            _inkSpeaker = "Dẫn chuyện";
+        }
+
+        public void ResumeInk(Action onComplete = null)
+        {
+            if (IsDialogueActive || InkStory == null) return;
+            _inkActive = true;
+            onConversationComplete = onComplete;
+            DialogueStarted?.Invoke(null);
+            if (_pendingText != null) PublishInkLine();
+            else AdvanceInk();
+        }
+
+        private void AdvanceInk()
+        {
+            while (InkStory.canContinue)
+            {
+                string previousState = InkStopBeforeLine != null ? InkStory.state.ToJson() : null;
+                _pendingText = InkStory.Continue().Trim();
+                _pendingTags = InkStory.currentTags.ToArray();
+                if (InkStopBeforeLine != null && InkStopBeforeLine(_pendingTags))
+                {
+                    InkStory.state.LoadJson(previousState);
+                    _pendingText = null;
+                    EndDialogue();
+                    return;
+                }
+                if (string.IsNullOrWhiteSpace(_pendingText)) continue;
+                if (InkPauseBeforeLine != null && InkPauseBeforeLine(_pendingTags))
+                {
+                    EndDialogue();
+                    return;
+                }
+                PublishInkLine();
+                return;
+            }
+            if (InkStory.currentChoices.Count > 0) PublishInkChoices();
+            else EndDialogue();
+        }
+
+        private void PublishInkLine()
+        {
+            foreach (string tag in _pendingTags)
+            {
+                if (!tag.StartsWith("speaker:")) continue;
+                switch (tag.Substring(8).Trim())
+                {
+                    case "Kieu": _inkSpeaker = "Thúy Kiều"; break;
+                    case "MeKieu": _inkSpeaker = "Mẹ Kiều"; break;
+                    case "MaGiamSinh": _inkSpeaker = "Mã Giám Sinh"; break;
+                    default: _inkSpeaker = "Dẫn chuyện"; break;
+                }
+            }
+            InkTagsChanged?.Invoke(_pendingTags);
+            LineChanged?.Invoke(_inkSpeaker, _pendingText);
+            _pendingText = null;
+            PublishInkChoices();
+        }
+
+        private void PublishInkChoices()
+        {
+            var choices = new DialogueChoice[InkStory.currentChoices.Count];
+            for (int i = 0; i < choices.Length; i++) choices[i] = new DialogueChoice(InkStory.currentChoices[i].text);
+            ChoicesChanged?.Invoke(choices);
         }
     }
 }

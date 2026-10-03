@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using TMPro;
 
 namespace ThuyKieu.Dialogue
 {
@@ -18,6 +19,8 @@ namespace ThuyKieu.Dialogue
         [Header("Texts")]
         [SerializeField] private Text npcNameText;
         [SerializeField] private Text dialogueText;
+        [SerializeField] private TMP_Text _speakerText;
+        [SerializeField] private TMP_Text _bodyText;
 
         [Header("Choices")]
         [Tooltip("Parent of the choice buttons. Buttons are pooled from choiceButtonPrefab.")]
@@ -33,6 +36,7 @@ namespace ThuyKieu.Dialogue
 
         private readonly List<Button> spawnedChoices = new List<Button>();
         private DialogueManager manager;
+        public event System.Action InteractionConfirmed;
 
         private void Start()
         {
@@ -94,7 +98,7 @@ namespace ThuyKieu.Dialogue
                 {
                     if (keyboard[Key.Digit1 + i].wasPressedThisFrame)
                     {
-                        manager.SelectChoice(i);
+                        OnChoiceClicked(i);
                         return;
                     }
                 }
@@ -104,15 +108,16 @@ namespace ThuyKieu.Dialogue
 
             if (keyboard.spaceKey.wasPressedThisFrame || keyboard.enterKey.wasPressedThisFrame)
             {
-                manager.Advance();
+                OnContinueClicked();
             }
         }
 
         /// <summary>Hooked to the Continue button.</summary>
         public void OnContinueClicked()
         {
-            if (manager != null)
+            if (manager != null && manager.IsDialogueActive && !manager.IsAtChoicePoint)
             {
+                InteractionConfirmed?.Invoke();
                 manager.Advance();
             }
         }
@@ -120,17 +125,18 @@ namespace ThuyKieu.Dialogue
         /// <summary>Hooked to a choice button. Also callable from tests.</summary>
         public void OnChoiceClicked(int index)
         {
-            if (manager != null)
+            if (manager != null && manager.IsAtChoicePoint && index >= 0 && index < spawnedChoices.Count)
             {
+                InteractionConfirmed?.Invoke();
                 manager.SelectChoice(index);
             }
         }
 
         public bool IsPanelVisible => dialoguePanel != null && dialoguePanel.activeSelf;
 
-        public string CurrentName => npcNameText != null ? npcNameText.text : string.Empty;
+        public string CurrentName => _speakerText != null ? _speakerText.text : npcNameText != null ? npcNameText.text : string.Empty;
 
-        public string CurrentText => dialogueText != null ? dialogueText.text : string.Empty;
+        public string CurrentText => _bodyText != null ? _bodyText.text : dialogueText != null ? dialogueText.text : string.Empty;
 
         public int VisibleChoiceCount => spawnedChoices.Count;
 
@@ -141,6 +147,8 @@ namespace ThuyKieu.Dialogue
 
         private void HandleLineChanged(string speaker, string text)
         {
+            if (_speakerText != null) _speakerText.text = speaker;
+            if (_bodyText != null) _bodyText.text = text;
             if (npcNameText != null)
             {
                 npcNameText.text = speaker;
@@ -185,6 +193,8 @@ namespace ThuyKieu.Dialogue
                 button.onClick.AddListener(delegate { OnChoiceClicked(index); });
 
                 Text label = button.GetComponentInChildren<Text>();
+                TMP_Text tmpLabel = button.GetComponentInChildren<TMP_Text>();
+                if (tmpLabel != null) tmpLabel.text = (i + 1) + ". " + choices[i].ChoiceText;
                 if (label != null)
                 {
                     label.text = (i + 1) + ". " + choices[i].ChoiceText;

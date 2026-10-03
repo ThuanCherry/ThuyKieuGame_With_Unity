@@ -1,0 +1,5 @@
+return new {
+ scenes = Enumerable.Range(0, UnityEngine.SceneManagement.SceneManager.sceneCount).Select(i => { var scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i); return new {scene.path,scene.isDirty,roots=scene.GetRootGameObjects().Select(g=>g.name).ToArray()}; }).ToArray(),
+ models = UnityEditor.AssetDatabase.FindAssets("t:Model",new[]{"Assets/_Game/Art/Characters","Assets/_Game/Animations/ThuyKieu"}).Select(UnityEditor.AssetDatabase.GUIDToAssetPath).Select(p => new { path=p, avatars=UnityEditor.AssetDatabase.LoadAllAssetsAtPath(p).OfType<UnityEngine.Avatar>().Select(a=>new{a.name,a.isValid,a.isHuman}).ToArray(), clips=UnityEditor.AssetDatabase.LoadAllAssetsAtPath(p).OfType<UnityEngine.AnimationClip>().Where(c=>!c.name.StartsWith("__preview__")).Select(c=>new{c.name,c.isHumanMotion,c.isLooping}).ToArray() }).ToArray(),
+ systems = UnityEngine.Object.FindObjectsByType<UnityEngine.MonoBehaviour>(UnityEngine.FindObjectsInactive.Include,UnityEngine.FindObjectsSortMode.None).Select(m=>m==null?"Missing":m.GetType().FullName).ToArray()
+};

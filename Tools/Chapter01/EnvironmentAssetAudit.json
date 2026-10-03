@@ -1,0 +1,818 @@
+{
+  "scene": "Assets/_Game/Scenes/Chapter01_GiaBien.unity",
+  "dirty": false,
+  "playing": false,
+  "prefabs": [
+    {
+      "path": "Assets/_Game/Prefabs/Architecture/Chapter01Modules/VuongGiaRoof.prefab",
+      "size": "(14.00, 2.11, 10.85)",
+      "center": "(0.00, 0.81, 0.00)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "meshes": [
+        {
+          "name": "VuongGiaRoof",
+          "vertices": 8168
+        },
+        {
+          "name": "Slab",
+          "vertices": 24
+        },
+        {
+          "name": "TileChannel0",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel1",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel2",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel3",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel4",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel5",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel6",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel7",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel8",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel9",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel10",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel11",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel12",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel13",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel14",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel15",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel16",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel17",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel18",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel19",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel20",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel21",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel22",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel23",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel24",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel25",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel26",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel27",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel28",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel29",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel30",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel31",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel32",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel33",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel34",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel35",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel36",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel37",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel38",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel39",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel40",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel41",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel42",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel43",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel44",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel45",
+          "vertices": 88
+        },
+        {
+          "name": "Eave",
+          "vertices": 24
+        },
+        {
+          "name": "Slab",
+          "vertices": 24
+        },
+        {
+          "name": "TileChannel0",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel1",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel2",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel3",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel4",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel5",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel6",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel7",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel8",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel9",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel10",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel11",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel12",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel13",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel14",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel15",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel16",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel17",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel18",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel19",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel20",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel21",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel22",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel23",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel24",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel25",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel26",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel27",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel28",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel29",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel30",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel31",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel32",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel33",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel34",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel35",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel36",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel37",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel38",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel39",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel40",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel41",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel42",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel43",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel44",
+          "vertices": 88
+        },
+        {
+          "name": "TileChannel45",
+          "vertices": 88
+        },
+        {
+          "name": "Eave",
+          "vertices": 24
+        },
+        {
+          "name": "Ridge",
+          "vertices": 24
+        }
+      ],
+      "materials": [
+        {
+          "name": "RoofTile",
+          "shader": "Universal Render Pipeline/Lit",
+          "texture": null,
+          "path": ""
+        },
+        {
+          "name": "WoodTrim",
+          "shader": "Universal Render Pipeline/Lit",
+          "texture": null,
+          "path": ""
+        }
+      ],
+      "colliders": 97
+    },
+    {
+      "path": "Assets/_Game/Prefabs/Architecture/DoorLeaf.prefab",
+      "size": "(1.03, 2.01, 0.20)",
+      "center": "(0.02, 1.00, 0.01)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "meshes": [
+        {
+          "name": "Model",
+          "vertices": 36611
+        }
+      ],
+      "materials": [
+        {
+          "name": "M_DoorLeaf",
+          "shader": "Universal Render Pipeline/Lit",
+          "texture": "texture_pbr_20250901",
+          "path": "Assets/_Game/Art/Environment/Architecture/DoorLeaf.fbm/texture_pbr_20250901.png"
+        }
+      ],
+      "colliders": 1
+    },
+    {
+      "path": "Assets/_Game/Prefabs/Architecture/Fence.prefab",
+      "size": "(3.18, 1.15, 0.20)",
+      "center": "(0.00, 0.57, 0.00)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "meshes": [
+        {
+          "name": "Model",
+          "vertices": 312381
+        }
+      ],
+      "materials": [
+        {
+          "name": "M_Fence",
+          "shader": "Universal Render Pipeline/Lit",
+          "texture": "texture_pbr_20250901",
+          "path": "Assets/_Game/Art/Environment/Architecture/Fence.fbm/texture_pbr_20250901.png"
+        }
+      ],
+      "colliders": 1
+    },
+    {
+      "path": "Assets/_Game/Prefabs/Architecture/KieuHouse_Exterior.prefab",
+      "size": "(10.67, 4.99, 8.61)",
+      "center": "(-0.05, 2.50, 0.12)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "meshes": [
+        {
+          "name": "Model",
+          "vertices": 323275
+        }
+      ],
+      "materials": [
+        {
+          "name": "M_KieuHouse_Exterior",
+          "shader": "Universal Render Pipeline/Lit",
+          "texture": "texture_pbr_20250901",
+          "path": "Assets/_Game/Art/Environment/Architecture/KieuHouse_Exterior.fbm/texture_pbr_20250901.png"
+        }
+      ],
+      "colliders": 1
+    },
+    {
+      "path": "Assets/_Game/Prefabs/Props/Altar.prefab",
+      "size": "(1.30, 1.15, 0.57)",
+      "center": "(0.00, 0.58, -0.01)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "meshes": [
+        {
+          "name": "Model",
+          "vertices": 333639
+        }
+      ],
+      "materials": [
+        {
+          "name": "M_Altar",
+          "shader": "Universal Render Pipeline/Lit",
+          "texture": "texture_pbr_20250901",
+          "path": "Assets/_Game/Art/Environment/Props/Altar.fbm/texture_pbr_20250901.png"
+        }
+      ],
+      "colliders": 1
+    },
+    {
+      "path": "Assets/_Game/Prefabs/Props/Bed.prefab",
+      "size": "(2.00, 1.79, 1.29)",
+      "center": "(-0.02, 0.90, 0.12)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "meshes": [
+        {
+          "name": "Model",
+          "vertices": 297805
+        }
+      ],
+      "materials": [
+        {
+          "name": "M_Bed",
+          "shader": "Universal Render Pipeline/Lit",
+          "texture": "texture_pbr_20250901",
+          "path": "Assets/_Game/Art/Environment/Props/Bed.fbm/texture_pbr_20250901.png"
+        }
+      ],
+      "colliders": 1
+    },
+    {
+      "path": "Assets/_Game/Prefabs/Props/Cabinet.prefab",
+      "size": "(1.10, 1.81, 0.56)",
+      "center": "(0.00, 0.90, -0.08)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "meshes": [
+        {
+          "name": "Model",
+          "vertices": 303720
+        }
+      ],
+      "materials": [
+        {
+          "name": "M_Cabinet",
+          "shader": "Universal Render Pipeline/Lit",
+          "texture": "texture_pbr_20250901",
+          "path": "Assets/_Game/Art/Environment/Props/Cabinet.fbm/texture_pbr_20250901.png"
+        }
+      ],
+      "colliders": 1
+    },
+    {
+      "path": "Assets/_Game/Prefabs/Props/CeramicJar.prefab",
+      "size": "(1.53, 0.80, 1.01)",
+      "center": "(0.03, 0.40, 0.01)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "meshes": [
+        {
+          "name": "Model",
+          "vertices": 277231
+        }
+      ],
+      "materials": [
+        {
+          "name": "M_CeramicJar",
+          "shader": "Universal Render Pipeline/Lit",
+          "texture": "texture_pbr_20250901",
+          "path": "Assets/_Game/Art/Environment/Props/CeramicJar.fbm/texture_pbr_20250901.png"
+        }
+      ],
+      "colliders": 1
+    },
+    {
+      "path": "Assets/_Game/Prefabs/Props/OilLamp.prefab",
+      "size": "(0.13, 0.35, 0.12)",
+      "center": "(0.01, 0.18, 0.00)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "meshes": [
+        {
+          "name": "Model",
+          "vertices": 299554
+        }
+      ],
+      "materials": [
+        {
+          "name": "M_OilLamp",
+          "shader": "Universal Render Pipeline/Lit",
+          "texture": "texture_pbr_20250901",
+          "path": "Assets/_Game/Art/Environment/Props/OilLamp.fbm/texture_pbr_20250901.png"
+        }
+      ],
+      "colliders": 0
+    },
+    {
+      "path": "Assets/_Game/Prefabs/Props/TableSet.prefab",
+      "size": "(1.90, 0.74, 1.55)",
+      "center": "(0.05, 0.37, -0.03)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "meshes": [
+        {
+          "name": "Model",
+          "vertices": 315016
+        }
+      ],
+      "materials": [
+        {
+          "name": "M_TableSet",
+          "shader": "Universal Render Pipeline/Lit",
+          "texture": "texture_pbr_20250901",
+          "path": "Assets/_Game/Art/Environment/Props/TableSet.fbm/texture_pbr_20250901.png"
+        }
+      ],
+      "colliders": 1
+    },
+    {
+      "path": "Assets/_Game/Prefabs/Props/Well.prefab",
+      "size": "(2.01, 2.30, 1.58)",
+      "center": "(0.00, 1.15, -0.05)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "meshes": [
+        {
+          "name": "Model",
+          "vertices": 301501
+        }
+      ],
+      "materials": [
+        {
+          "name": "M_Well",
+          "shader": "Universal Render Pipeline/Lit",
+          "texture": "texture_pbr_20250901",
+          "path": "Assets/_Game/Art/Environment/Props/Well.fbm/texture_pbr_20250901.png"
+        }
+      ],
+      "colliders": 1
+    },
+    {
+      "path": "Assets/_Game/Prefabs/Vegetation/ArecaPalm.prefab",
+      "size": "(5.89, 4.99, 3.34)",
+      "center": "(0.07, 2.49, -0.11)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "meshes": [
+        {
+          "name": "Model",
+          "vertices": 354111
+        }
+      ],
+      "materials": [
+        {
+          "name": "M_ArecaPalm",
+          "shader": "Universal Render Pipeline/Lit",
+          "texture": "texture_pbr_20250901",
+          "path": "Assets/_Game/Art/Environment/Vegetation/ArecaPalm.fbm/texture_pbr_20250901.png"
+        }
+      ],
+      "colliders": 1
+    },
+    {
+      "path": "Assets/_Game/Prefabs/Vegetation/Bamboo.prefab",
+      "size": "(3.57, 4.98, 3.41)",
+      "center": "(0.02, 2.49, 0.14)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "meshes": [
+        {
+          "name": "Model",
+          "vertices": 356968
+        }
+      ],
+      "materials": [
+        {
+          "name": "M_Bamboo",
+          "shader": "Universal Render Pipeline/Lit",
+          "texture": "texture_pbr_20250901",
+          "path": "Assets/_Game/Art/Environment/Vegetation/Bamboo.fbm/texture_pbr_20250901.png"
+        }
+      ],
+      "colliders": 1
+    },
+    {
+      "path": "Assets/_Game/Prefabs/Vegetation/BananaTree.prefab",
+      "size": "(3.07, 2.79, 3.00)",
+      "center": "(-0.02, 1.40, 0.04)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "meshes": [
+        {
+          "name": "Model",
+          "vertices": 38935
+        }
+      ],
+      "materials": [
+        {
+          "name": "M_BananaTree",
+          "shader": "Universal Render Pipeline/Lit",
+          "texture": "texture_pbr_20250901",
+          "path": "Assets/_Game/Art/Environment/Vegetation/BananaTree.fbm/texture_pbr_20250901.png"
+        }
+      ],
+      "colliders": 1
+    }
+  ],
+  "audio": [],
+  "roots": [
+    {
+      "name": "Chapter01Systems",
+      "active": true,
+      "pos": "(0.00, 0.00, 0.00)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "components": [
+        "Transform",
+        "DialogueManager",
+        "Chapter01Director",
+        "DialogueCursorController",
+        "DialogueTagRouter"
+      ]
+    },
+    {
+      "name": "InkSession",
+      "active": true,
+      "pos": "(0.00, 0.00, 0.00)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "components": [
+        "Transform",
+        "InkStatePersistence"
+      ]
+    },
+    {
+      "name": "ThuyKieu",
+      "active": true,
+      "pos": "(0.00, 0.05, -1.80)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "components": [
+        "Transform",
+        "CharacterController",
+        "PlayerMovement",
+        "PlayerInteraction"
+      ]
+    },
+    {
+      "name": "PlayerSpawn",
+      "active": true,
+      "pos": "(0.00, 0.05, -1.80)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "components": [
+        "Transform"
+      ]
+    },
+    {
+      "name": "Main Camera",
+      "active": true,
+      "pos": "(0.00, 2.80, -5.40)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "components": [
+        "Transform",
+        "Camera",
+        "AudioListener",
+        "ThirdPersonCameraController"
+      ]
+    },
+    {
+      "name": "MeKieu",
+      "active": true,
+      "pos": "(-2.50, 0.00, 1.50)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "components": [
+        "Transform",
+        "CapsuleCollider",
+        "ChapterInteractable"
+      ]
+    },
+    {
+      "name": "MaGiamSinh",
+      "active": true,
+      "pos": "(2.50, 0.00, 0.50)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "components": [
+        "Transform",
+        "CapsuleCollider"
+      ]
+    },
+    {
+      "name": "DialogueCanvas",
+      "active": true,
+      "pos": "(549.00, 249.00, 0.00)",
+      "scale": "(0.51, 0.51, 0.51)",
+      "components": [
+        "RectTransform",
+        "Canvas",
+        "CanvasScaler",
+        "GraphicRaycaster",
+        "DialogueUI",
+        "InteractionPromptUI"
+      ]
+    },
+    {
+      "name": "EventSystem",
+      "active": true,
+      "pos": "(0.00, 0.00, 0.00)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "components": [
+        "Transform",
+        "EventSystem",
+        "InputSystemUIInputModule"
+      ]
+    },
+    {
+      "name": "DialogueCameraPresets",
+      "active": true,
+      "pos": "(0.00, 0.00, 0.00)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "components": [
+        "Transform"
+      ]
+    },
+    {
+      "name": "VuongGia",
+      "active": true,
+      "pos": "(0.00, 0.00, 0.00)",
+      "scale": "(1.00, 1.00, 1.00)",
+      "components": [
+        "Transform"
+      ]
+    }
+  ]
+}

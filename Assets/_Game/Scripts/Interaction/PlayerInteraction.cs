@@ -26,6 +26,7 @@ namespace ThuyKieu.Interaction
 
         /// <summary>The interactable currently targeted, or null. UI can poll this for a prompt.</summary>
         public IInteractable CurrentTarget { get; private set; }
+        public bool ControlLocked { get; set; }
 
         private void Awake()
         {
@@ -37,6 +38,7 @@ namespace ThuyKieu.Interaction
 
         private void Update()
         {
+            if (ControlLocked) { CurrentTarget = null; return; }
             CurrentTarget = FindInteractable();
 
             if (CurrentTarget != null && InputReader.InteractPressedThisFrame)
@@ -47,6 +49,18 @@ namespace ThuyKieu.Interaction
 
         private IInteractable FindInteractable()
         {
+            // Opt-in range detection also works when standing beside an NPC.
+            IInteractable nearest = null;
+            float bestDistance = interactionDistance;
+            foreach (Collider collider in Physics.OverlapSphere(transform.position, interactionDistance, interactionLayers, triggerInteraction))
+            {
+                var availability = collider.GetComponentInParent<IInteractionAvailability>();
+                var candidate = collider.GetComponentInParent<IInteractable>();
+                if (availability == null || !availability.IsAvailable || candidate == null) continue;
+                float distance = Vector3.Distance(transform.position, collider.transform.position);
+                if (distance < bestDistance) { nearest = candidate; bestDistance = distance; }
+            }
+            if (nearest != null) return nearest;
             Vector3 origin = detectionOrigin.position + Vector3.up * detectionHeight;
             Vector3 direction = detectionOrigin.forward;
 
@@ -57,6 +71,8 @@ namespace ThuyKieu.Interaction
             }
 
             // GetComponentInParent so a collider on a child of an NPC still resolves to the NPC.
+            var available = hit.collider.GetComponentInParent<IInteractionAvailability>();
+            if (available != null && !available.IsAvailable) return null;
             return hit.collider.GetComponentInParent<IInteractable>();
         }
 

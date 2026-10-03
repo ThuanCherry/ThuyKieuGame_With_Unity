@@ -25,6 +25,13 @@ namespace ThuyKieu.Player
         [Tooltip("Movement is relative to this transform. Leave empty to fall back to Camera.main.")]
         [SerializeField] private Transform cameraTransform;
 
+        [Header("Animation")]
+        [SerializeField] private Animator _animator;
+        [SerializeField] private float _animationSmoothTime = 0.08f;
+        [Tooltip("Use 0 / 0.5 / 1 for idle / walk / run. Leave off for controllers using metres per second.")]
+        [SerializeField] private bool _normalizeAnimatorSpeed;
+        private static readonly int SpeedParameter = Animator.StringToHash("Speed");
+
         private CharacterController controller;
         private float verticalVelocity;
 
@@ -33,10 +40,13 @@ namespace ThuyKieu.Player
 
         /// <summary>True while the run input is held and the character is actually moving.</summary>
         public bool IsRunning { get; private set; }
+        public bool ControlLocked { get; set; }
 
         private void Awake()
         {
             controller = GetComponent<CharacterController>();
+            if (_animator == null) _animator = GetComponentInChildren<Animator>();
+            if (_animator != null) _animator.applyRootMotion = false;
 
             if (cameraTransform == null && Camera.main != null)
             {
@@ -46,19 +56,32 @@ namespace ThuyKieu.Player
 
         private void Update()
         {
-            Vector3 moveDirection = GetCameraRelativeDirection(InputReader.Move);
+            Vector3 moveDirection = GetCameraRelativeDirection(ControlLocked ? Vector2.zero : InputReader.Move);
 
-            IsRunning = InputReader.IsRunHeld && moveDirection.sqrMagnitude > 0f;
-            float speed = IsRunning ? runSpeed : walkSpeed;
+            bool wantsToRun = InputReader.IsRunHeld && moveDirection.sqrMagnitude > 0f;
+            float speed = wantsToRun ? runSpeed : walkSpeed;
 
             RotateTowards(moveDirection);
             ApplyGravity();
 
             Vector3 velocity = moveDirection * speed;
             velocity.y = verticalVelocity;
+            Vector3 previousPosition = transform.position;
             controller.Move(velocity * Time.deltaTime);
 
-            CurrentSpeed = new Vector3(velocity.x, 0f, velocity.z).magnitude;
+            Vector3 displacement = transform.position - previousPosition;
+            displacement.y = 0f;
+            CurrentSpeed = Time.deltaTime > 0f ? displacement.magnitude / Time.deltaTime : 0f;
+            IsRunning = wantsToRun && CurrentSpeed > walkSpeed + 0.01f;
+            if (_animator != null && _animator.runtimeAnimatorController != null)
+            {
+                float animationSpeed = CurrentSpeed;
+                if (_normalizeAnimatorSpeed)
+                    animationSpeed = CurrentSpeed <= walkSpeed
+                        ? Mathf.InverseLerp(0f, walkSpeed, CurrentSpeed) * 0.5f
+                        : 0.5f + Mathf.InverseLerp(walkSpeed, runSpeed, CurrentSpeed) * 0.5f;
+                _animator.SetFloat(SpeedParameter, animationSpeed, _animationSmoothTime, Time.deltaTime);
+            }
         }
 
         /// <summary>Projects the 2D input onto the horizontal plane of the camera.</summary>

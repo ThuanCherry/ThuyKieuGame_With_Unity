@@ -21,5 +21,8 @@ namespace ThuyKieu.Dialogue
         public string ChoiceText => choiceText;
         public DialogueData NextNode => nextNode;
         public string ChoiceId => choiceId;
+
+        public DialogueChoice() { }
+        public DialogueChoice(string text) { choiceText = text; }
     }
 }

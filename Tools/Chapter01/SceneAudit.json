@@ -1,0 +1,167 @@
+[
+  {
+    "path": "Assets/_Game/Scenes/Chapter01_GiaBien.unity",
+    "roots": [
+      "Chapter01Systems",
+      "InkSession",
+      "ThuyKieu",
+      "PlayerSpawn",
+      "Main Camera",
+      "CourtyardFloor",
+      "MainHallFloor",
+      "BackWall",
+      "WestWall",
+      "EastWall",
+      "FrontWallLeft",
+      "FrontWallRight",
+      "DoorLintel",
+      "CourtyardWest",
+      "CourtyardEast",
+      "CourtyardGate",
+      "RoofBeam",
+      "RoofBeam",
+      "RoofBeam",
+      "MeKieu",
+      "MaGiamSinh · model chưa rig",
+      "ContractTable",
+      "TableLeg",
+      "TableLeg",
+      "TableLeg",
+      "TableLeg",
+      "Tờ khế",
+      "MainDoorInteraction",
+      "Moonlight",
+      "OilLamp",
+      "ContractLamp",
+      "CourtyardRain",
+      "DialogueCanvas",
+      "EventSystem"
+    ],
+    "players": 1,
+    "cameras": 1,
+    "dialogueManagers": 1,
+    "missingScripts": 0
+  },
+  {
+    "path": "Assets/_Game/Scenes/Chapter02_Placeholder.unity",
+    "roots": [
+      "Main Camera",
+      "Chapter2Canvas"
+    ],
+    "players": 0,
+    "cameras": 1,
+    "dialogueManagers": 0,
+    "missingScripts": 0
+  },
+  {
+    "path": "Assets/_Game/Scenes/CoreTest.unity",
+    "roots": [
+      "Ground",
+      "Directional Light",
+      "Player (Missing Prefab with guid: 90556908ec17b3d69099f67235084777)",
+      "Main Camera",
+      "InteractionTest",
+      "EventSystem",
+      "DialogueCanvas",
+      "GameSystems",
+      "TestFather",
+      "TestLetter"
+    ],
+    "players": 0,
+    "cameras": 1,
+    "dialogueManagers": 1,
+    "missingScripts": 0
+  },
+  {
+    "path": "Assets/_Game/Scenes/Dev_PlayerMovement.unity",
+    "roots": [
+      "Main Camera",
+      "Directional Light",
+      "Ground",
+      "PF_ThuyKieu_Player (Missing Prefab with guid: b97e432ca35f3f84e8feee059aded7a0)"
+    ],
+    "players": 0,
+    "cameras": 1,
+    "dialogueManagers": 0,
+    "missingScripts": 0
+  },
+  {
+    "path": "Assets/_Game/Scenes/Dev_PreservedEditorScene.unity",
+    "roots": [
+      "Main Camera",
+      "Directional Light"
+    ],
+    "players": 0,
+    "cameras": 1,
+    "dialogueManagers": 0,
+    "missingScripts": 0
+  },
+  {
+    "path": "Assets/_Game/Scenes/Dev_ThuyKieuEditorBackup.unity",
+    "roots": [
+      "Main Camera",
+      "Directional Light",
+      "aafc98e3d34e76f74337fbd6814147f9"
+    ],
+    "players": 0,
+    "cameras": 1,
+    "dialogueManagers": 0,
+    "missingScripts": 0
+  },
+  {
+    "path": "Assets/_Game/Scenes/KieuHome_Exterior.unity",
+    "roots": [
+      "KieuHomeExterior",
+      "Player (Missing Prefab with guid: 90556908ec17b3d69099f67235084777)",
+      "Main Camera",
+      "EventSystem",
+      "PromptCanvas"
+    ],
+    "players": 0,
+    "cameras": 1,
+    "dialogueManagers": 0,
+    "missingScripts": 0
+  },
+  {
+    "path": "Assets/_Game/Scenes/KieuHome_Interior.unity",
+    "roots": [
+      "KieuHomeInterior",
+      "Player (Missing Prefab with guid: 90556908ec17b3d69099f67235084777)",
+      "Main Camera",
+      "EventSystem",
+      "PromptCanvas"
+    ],
+    "players": 0,
+    "cameras": 1,
+    "dialogueManagers": 0,
+    "missingScripts": 0
+  },
+  {
+    "path": "Assets/_Game/Scenes/ThuyKieu_Playground.unity",
+    "roots": [
+      "ThuyKieu",
+      "Main Camera",
+      "Directional Light",
+      "Ground",
+      "CollisionTestWall",
+      "StepTest"
+    ],
+    "players": 1,
+    "cameras": 1,
+    "dialogueManagers": 0,
+    "missingScripts": 0
+  },
+  {
+    "path": "Assets/Scenes/SampleScene.unity",
+    "roots": [
+      "Main Camera",
+      "Directional Light",
+      "Global Volume",
+      "MCP_TEST"
+    ],
+    "players": 0,
+    "cameras": 1,
+    "dialogueManagers": 0,
+    "missingScripts": 0
+  }
+]
