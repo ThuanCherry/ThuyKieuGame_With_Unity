@@ -87,6 +87,11 @@ namespace ThuyKieu.Core.Editor
         private static void Teleport(Vector3 position)
         { var cc = _player.GetComponent<CharacterController>(); cc.enabled = false; _player.transform.position = position; cc.enabled = true; Physics.SyncTransforms(); }
         private static void Next(int phase) { _phase = phase; _start = Time.time; _keys = Array.Empty<Key>(); }
+        private static void ContinueDisplayedLine()
+        {
+            if (_view.IsRevealing) _view.OnContinueClicked();
+            _view.OnContinueClicked();
+        }
         private static void Tick()
         {
             if (!Application.isPlaying) { Finish(); return; }
@@ -104,11 +109,12 @@ namespace ThuyKieu.Core.Editor
                     case 1:
                         if (elapsed < 0.4f) return;
                         Check(Vector3.Distance(_origin, _player.transform.position) < 0.1f, "W cannot move during dialogue");
+                        if (_view.IsRevealing) _view.OnContinueClicked();
                         Next(2); _keys = new[] { Key.Space }; _pulse = true; break;
                     case 2:
                         if (elapsed < 0.15f) return;
                         Check(_view.CurrentText.StartsWith("Vương Ông"), "Space advances dialogue: " + _view.CurrentText);
-                        _keys = Array.Empty<Key>(); _view.OnContinueClicked(); Next(3); break;
+                        _keys = Array.Empty<Key>(); ContinueDisplayedLine(); Next(3); break;
                     case 3:
                         Check(_director.CurrentStage == Chapter01Director.Stage.Mother && !_player.ControlLocked, "Opening returns movement at Mother stage");
                         _camera.enabled = false; Camera.main.transform.rotation = Quaternion.identity;

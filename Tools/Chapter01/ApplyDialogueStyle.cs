@@ -1,0 +1,15 @@
+if (UnityEditor.EditorApplication.isPlaying) throw new System.InvalidOperationException("Exit Play Mode first.");
+var scene=UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+if(scene.path!=ThuyKieu.Core.Editor.Chapter01Setup.ScenePath) throw new System.InvalidOperationException("Open Chapter 1 first.");
+var ui=UnityEngine.Object.FindAnyObjectByType<ThuyKieu.Dialogue.DialogueUI>();
+ThuyKieu.UI.Editor.Chapter01DialogueStyle.Apply(ui);
+var audio=UnityEngine.Object.FindAnyObjectByType<ThuyKieu.Environment.Chapter01Audio>();
+var serialized=new UnityEditor.SerializedObject(audio);
+var clip=UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.AudioClip>("Assets/_Game/Audio/Chapter01/DialogueLetter.wav");
+if(clip==null) throw new System.InvalidOperationException("Missing letter audio");
+serialized.FindProperty("_dialogueLetter").objectReferenceValue=clip;
+serialized.FindProperty("_dialogueLetterVolume").floatValue=.95f;
+serialized.ApplyModifiedProperties();
+UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(scene);
+UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene);
+return "Applied translucent navy dialogue panel, bright border, text shadows and louder letter sound.";

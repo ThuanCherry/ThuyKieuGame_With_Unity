@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ThuyKieu.Environment
 {
-    // Scene-local presentation. Empty clip slots remain silent until real assets are assigned.
+    // Scene-local presentation; audio follows existing narrative and interaction cues.
     public sealed class Chapter01Audio : MonoBehaviour
     {
         [SerializeField] private Chapter01Director _director;
@@ -16,11 +16,14 @@ namespace ThuyKieu.Environment
         private float _stepDistance;
         private float _musicVolume = .18f;
         private CharacterController _controller;
+        [SerializeField] private AudioClip _dialogueLetter;
+        [SerializeField, Range(0f, 1f)] private float _dialogueLetterVolume = .95f;
 
         private void OnEnable()
         {
             if (_director != null) _director.CueReceived += OnCue;
             if (_dialogueUI != null) _dialogueUI.InteractionConfirmed += PlayUI;
+            if (_dialogueUI != null) _dialogueUI.CharacterRevealed += PlayLetter;
         }
         private void Start()
         {
@@ -31,10 +34,11 @@ namespace ThuyKieu.Environment
         {
             if (_director != null) _director.CueReceived -= OnCue;
             if (_dialogueUI != null) _dialogueUI.InteractionConfirmed -= PlayUI;
+            if (_dialogueUI != null) _dialogueUI.CharacterRevealed -= PlayLetter;
             foreach (var source in new[]{_musicSource, _rainSource, _windSource}) if (source != null) source.Stop();
         }
         private static void StartLoop(AudioSource source)
-        { if (source != null && source.clip != null) { source.loop = true; source.Play(); } }
+        { if (source != null && source.clip != null && !source.isPlaying) { source.loop = true; source.Play(); } }
         private void OnCue(string key, string value)
         {
             if (key == "music" && value == "sad_strings") { _musicVolume = .18f; StartLoop(_musicSource); }
@@ -64,5 +68,6 @@ namespace ThuyKieu.Environment
         private void PlayAt(AudioClip clip, Vector3 position)
         { if (clip != null && _sfxSource != null) { _sfxSource.transform.position = position; _sfxSource.PlayOneShot(clip); } }
         private void PlayUI() { if (_uiConfirm != null && _uiSource != null) _uiSource.PlayOneShot(_uiConfirm); }
+        private void PlayLetter() { if (_dialogueLetter != null && _uiSource != null) _uiSource.PlayOneShot(_dialogueLetter, _dialogueLetterVolume); }
     }
 }
