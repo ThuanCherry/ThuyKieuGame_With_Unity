@@ -41,6 +41,8 @@ namespace ThuyKieu.Player
         /// <summary>True while the run input is held and the character is actually moving.</summary>
         public bool IsRunning { get; private set; }
         public bool ControlLocked { get; set; }
+        /// <summary>Used by authored seated poses that must not be pulled down by the CharacterController.</summary>
+        public bool PositionLocked { get; set; }
 
         private void Awake()
         {
@@ -56,6 +58,13 @@ namespace ThuyKieu.Player
 
         private void Update()
         {
+            if (PositionLocked)
+            {
+                CurrentSpeed = 0f;
+                IsRunning = false;
+                if (_animator != null) _animator.SetFloat(SpeedParameter, 0f);
+                return;
+            }
             Vector3 moveDirection = GetCameraRelativeDirection(ControlLocked ? Vector2.zero : InputReader.Move);
 
             bool wantsToRun = InputReader.IsRunHeld && moveDirection.sqrMagnitude > 0f;

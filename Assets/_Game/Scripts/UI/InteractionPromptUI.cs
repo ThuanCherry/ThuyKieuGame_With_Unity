@@ -2,6 +2,7 @@ using ThuyKieu.Dialogue;
 using ThuyKieu.Interaction;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace ThuyKieu.UI
 {
@@ -13,6 +14,7 @@ namespace ThuyKieu.UI
     {
         [SerializeField] private GameObject promptRoot;
         [SerializeField] private Text promptText;
+        [SerializeField] private TMP_Text _tmpText;
 
         [Tooltip("Leave empty to find the player interaction component automatically.")]
         [SerializeField] private PlayerInteraction playerInteraction;
@@ -67,6 +69,7 @@ namespace ThuyKieu.UI
             {
                 promptText.text = text;
             }
+            if (visible && _tmpText != null) _tmpText.text = text;
         }
     }
 }

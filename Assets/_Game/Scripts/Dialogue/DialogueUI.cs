@@ -183,10 +183,10 @@ namespace ThuyKieu.Dialogue
         private void HandleChoicesChanged(DialogueChoice[] choices)
         {
             ClearChoices();
-            UpdatePanelLayout(choices == null ? 0 : choices.Length);
 
             if (choices == null || choices.Length == 0)
             {
+                UpdatePanelLayout(0);
                 if (continueButton != null)
                 {
                     continueButton.gameObject.SetActive(manager != null && manager.IsDialogueActive);
@@ -223,6 +223,7 @@ namespace ThuyKieu.Dialogue
 
                 spawnedChoices.Add(button);
             }
+            UpdatePanelLayout(spawnedChoices.Count);
         }
 
         private void HandleDialogueEnded()
@@ -238,6 +239,7 @@ namespace ThuyKieu.Dialogue
             {
                 if (spawnedChoices[i] != null)
                 {
+                    spawnedChoices[i].gameObject.SetActive(false);
                     Destroy(spawnedChoices[i].gameObject);
                 }
             }
@@ -289,7 +291,19 @@ namespace ThuyKieu.Dialogue
             if (_bodyText == null || dialoguePanel == null || choicesRoot == null) return;
             Canvas.ForceUpdateCanvases();
             var panel = dialoguePanel.GetComponent<RectTransform>();
-            float choiceHeight = choiceCount > 0 ? choiceCount * 48f + (choiceCount - 1) * 8f : 42f;
+            float choiceHeight = choiceCount > 0 ? (choiceCount - 1) * 8f : 42f;
+            foreach (var button in spawnedChoices)
+            {
+                var label = button.GetComponentInChildren<TMP_Text>();
+                if (label == null) continue;
+                label.textWrappingMode = TextWrappingModes.Normal;
+                float height = Mathf.Max(52, label.GetPreferredValues(label.text, Mathf.Max(100, panel.rect.width - 88), 0).y + 20);
+                var layout = button.GetComponent<LayoutElement>();
+                if (layout == null) layout = button.gameObject.AddComponent<LayoutElement>();
+                layout.minHeight = height;
+                layout.preferredHeight = height;
+                choiceHeight += height;
+            }
             float bodyHeight = Mathf.Max(64f, _bodyText.GetPreferredValues(_bodyText.text, Mathf.Max(100, panel.rect.width - 56), 0).y + 12);
             panel.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 64f + bodyHeight + choiceHeight + 36f);
             _bodyText.rectTransform.anchorMin = new Vector2(0, 1);
@@ -301,6 +315,18 @@ namespace ThuyKieu.Dialogue
             choicesRoot.anchorMax = new Vector2(1, 0);
             choicesRoot.offsetMin = new Vector2(28, 20);
             choicesRoot.offsetMax = new Vector2(-28, 20 + choiceHeight);
+        }
+
+        private Vector2 _lastCanvasSize;
+        private void LateUpdate()
+        {
+            if (!IsPanelVisible) return;
+            var canvas = GetComponentInParent<Canvas>();
+            if (canvas == null) return;
+            Vector2 size = canvas.GetComponent<RectTransform>().rect.size;
+            if (size == _lastCanvasSize) return;
+            _lastCanvasSize = size;
+            UpdatePanelLayout(spawnedChoices.Count);
         }
     }
 }

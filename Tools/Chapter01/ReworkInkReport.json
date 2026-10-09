@@ -1,0 +1,333 @@
+{
+  "passed": true,
+  "checks": [
+    "PASS: pair=0 probe=0 contract=0 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=0 probe=0 contract=0 survives Chapter 2 state restore",
+    "PASS: pair=0 probe=0 contract=1 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=0 probe=0 contract=1 survives Chapter 2 state restore",
+    "PASS: pair=0 probe=0 contract=2 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=0 probe=0 contract=2 survives Chapter 2 state restore",
+    "PASS: pair=0 probe=1 contract=0 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=0 probe=1 contract=0 survives Chapter 2 state restore",
+    "PASS: pair=0 probe=1 contract=1 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=0 probe=1 contract=1 survives Chapter 2 state restore",
+    "PASS: pair=0 probe=1 contract=2 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=0 probe=1 contract=2 survives Chapter 2 state restore",
+    "PASS: pair=0 probe=2 contract=0 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=0 probe=2 contract=0 survives Chapter 2 state restore",
+    "PASS: pair=0 probe=2 contract=1 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=0 probe=2 contract=1 survives Chapter 2 state restore",
+    "PASS: pair=0 probe=2 contract=2 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=0 probe=2 contract=2 survives Chapter 2 state restore",
+    "PASS: pair=0 probe=3 contract=0 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=0 probe=3 contract=0 survives Chapter 2 state restore",
+    "PASS: pair=0 probe=3 contract=1 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=0 probe=3 contract=1 survives Chapter 2 state restore",
+    "PASS: pair=0 probe=3 contract=2 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=0 probe=3 contract=2 survives Chapter 2 state restore",
+    "PASS: pair=1 probe=0 contract=0 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=1 probe=0 contract=0 survives Chapter 2 state restore",
+    "PASS: pair=1 probe=0 contract=1 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=1 probe=0 contract=1 survives Chapter 2 state restore",
+    "PASS: pair=1 probe=0 contract=2 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=1 probe=0 contract=2 survives Chapter 2 state restore",
+    "PASS: pair=1 probe=1 contract=0 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=1 probe=1 contract=0 survives Chapter 2 state restore",
+    "PASS: pair=1 probe=1 contract=1 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=1 probe=1 contract=1 survives Chapter 2 state restore",
+    "PASS: pair=1 probe=1 contract=2 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=1 probe=1 contract=2 survives Chapter 2 state restore",
+    "PASS: pair=1 probe=2 contract=0 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=1 probe=2 contract=0 survives Chapter 2 state restore",
+    "PASS: pair=1 probe=2 contract=1 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=1 probe=2 contract=1 survives Chapter 2 state restore",
+    "PASS: pair=1 probe=2 contract=2 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=1 probe=2 contract=2 survives Chapter 2 state restore",
+    "PASS: pair=1 probe=3 contract=0 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=1 probe=3 contract=0 survives Chapter 2 state restore",
+    "PASS: pair=1 probe=3 contract=1 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=1 probe=3 contract=1 survives Chapter 2 state restore",
+    "PASS: pair=1 probe=3 contract=2 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=1 probe=3 contract=2 survives Chapter 2 state restore",
+    "PASS: pair=2 probe=0 contract=0 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=2 probe=0 contract=0 survives Chapter 2 state restore",
+    "PASS: pair=2 probe=0 contract=1 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=2 probe=0 contract=1 survives Chapter 2 state restore",
+    "PASS: pair=2 probe=0 contract=2 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=2 probe=0 contract=2 survives Chapter 2 state restore",
+    "PASS: pair=2 probe=1 contract=0 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=2 probe=1 contract=0 survives Chapter 2 state restore",
+    "PASS: pair=2 probe=1 contract=1 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=2 probe=1 contract=1 survives Chapter 2 state restore",
+    "PASS: pair=2 probe=1 contract=2 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=2 probe=1 contract=2 survives Chapter 2 state restore",
+    "PASS: pair=2 probe=2 contract=0 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=2 probe=2 contract=0 survives Chapter 2 state restore",
+    "PASS: pair=2 probe=2 contract=1 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=2 probe=2 contract=1 survives Chapter 2 state restore",
+    "PASS: pair=2 probe=2 contract=2 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=2 probe=2 contract=2 survives Chapter 2 state restore",
+    "PASS: pair=2 probe=3 contract=0 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=2 probe=3 contract=0 survives Chapter 2 state restore",
+    "PASS: pair=2 probe=3 contract=1 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=2 probe=3 contract=1 survives Chapter 2 state restore",
+    "PASS: pair=2 probe=3 contract=2 preserves choices, stats, gates, hairpin and ending",
+    "PASS: pair=2 probe=3 contract=2 survives Chapter 2 state restore",
+    "PASS: Repeated clue knot cannot increment twice",
+    "PASS: Third clue stays optional and can still be inspected"
+  ],
+  "variants": [
+    {
+      "pair": 0,
+      "probe": 0,
+      "contract": 0,
+      "passed": true,
+      "lines": 197
+    },
+    {
+      "pair": 0,
+      "probe": 0,
+      "contract": 1,
+      "passed": true,
+      "lines": 191
+    },
+    {
+      "pair": 0,
+      "probe": 0,
+      "contract": 2,
+      "passed": true,
+      "lines": 188
+    },
+    {
+      "pair": 0,
+      "probe": 1,
+      "contract": 0,
+      "passed": true,
+      "lines": 198
+    },
+    {
+      "pair": 0,
+      "probe": 1,
+      "contract": 1,
+      "passed": true,
+      "lines": 192
+    },
+    {
+      "pair": 0,
+      "probe": 1,
+      "contract": 2,
+      "passed": true,
+      "lines": 189
+    },
+    {
+      "pair": 0,
+      "probe": 2,
+      "contract": 0,
+      "passed": true,
+      "lines": 200
+    },
+    {
+      "pair": 0,
+      "probe": 2,
+      "contract": 1,
+      "passed": true,
+      "lines": 194
+    },
+    {
+      "pair": 0,
+      "probe": 2,
+      "contract": 2,
+      "passed": true,
+      "lines": 191
+    },
+    {
+      "pair": 0,
+      "probe": 3,
+      "contract": 0,
+      "passed": true,
+      "lines": 204
+    },
+    {
+      "pair": 0,
+      "probe": 3,
+      "contract": 1,
+      "passed": true,
+      "lines": 195
+    },
+    {
+      "pair": 0,
+      "probe": 3,
+      "contract": 2,
+      "passed": true,
+      "lines": 195
+    },
+    {
+      "pair": 1,
+      "probe": 0,
+      "contract": 0,
+      "passed": true,
+      "lines": 197
+    },
+    {
+      "pair": 1,
+      "probe": 0,
+      "contract": 1,
+      "passed": true,
+      "lines": 191
+    },
+    {
+      "pair": 1,
+      "probe": 0,
+      "contract": 2,
+      "passed": true,
+      "lines": 188
+    },
+    {
+      "pair": 1,
+      "probe": 1,
+      "contract": 0,
+      "passed": true,
+      "lines": 198
+    },
+    {
+      "pair": 1,
+      "probe": 1,
+      "contract": 1,
+      "passed": true,
+      "lines": 192
+    },
+    {
+      "pair": 1,
+      "probe": 1,
+      "contract": 2,
+      "passed": true,
+      "lines": 189
+    },
+    {
+      "pair": 1,
+      "probe": 2,
+      "contract": 0,
+      "passed": true,
+      "lines": 200
+    },
+    {
+      "pair": 1,
+      "probe": 2,
+      "contract": 1,
+      "passed": true,
+      "lines": 194
+    },
+    {
+      "pair": 1,
+      "probe": 2,
+      "contract": 2,
+      "passed": true,
+      "lines": 191
+    },
+    {
+      "pair": 1,
+      "probe": 3,
+      "contract": 0,
+      "passed": true,
+      "lines": 204
+    },
+    {
+      "pair": 1,
+      "probe": 3,
+      "contract": 1,
+      "passed": true,
+      "lines": 195
+    },
+    {
+      "pair": 1,
+      "probe": 3,
+      "contract": 2,
+      "passed": true,
+      "lines": 195
+    },
+    {
+      "pair": 2,
+      "probe": 0,
+      "contract": 0,
+      "passed": true,
+      "lines": 199
+    },
+    {
+      "pair": 2,
+      "probe": 0,
+      "contract": 1,
+      "passed": true,
+      "lines": 193
+    },
+    {
+      "pair": 2,
+      "probe": 0,
+      "contract": 2,
+      "passed": true,
+      "lines": 190
+    },
+    {
+      "pair": 2,
+      "probe": 1,
+      "contract": 0,
+      "passed": true,
+      "lines": 200
+    },
+    {
+      "pair": 2,
+      "probe": 1,
+      "contract": 1,
+      "passed": true,
+      "lines": 194
+    },
+    {
+      "pair": 2,
+      "probe": 1,
+      "contract": 2,
+      "passed": true,
+      "lines": 191
+    },
+    {
+      "pair": 2,
+      "probe": 2,
+      "contract": 0,
+      "passed": true,
+      "lines": 202
+    },
+    {
+      "pair": 2,
+      "probe": 2,
+      "contract": 1,
+      "passed": true,
+      "lines": 196
+    },
+    {
+      "pair": 2,
+      "probe": 2,
+      "contract": 2,
+      "passed": true,
+      "lines": 193
+    },
+    {
+      "pair": 2,
+      "probe": 3,
+      "contract": 0,
+      "passed": true,
+      "lines": 206
+    },
+    {
+      "pair": 2,
+      "probe": 3,
+      "contract": 1,
+      "passed": true,
+      "lines": 197
+    },
+    {
+      "pair": 2,
+      "probe": 3,
+      "contract": 2,
+      "passed": true,
+      "lines": 197
+    }
+  ]
+}

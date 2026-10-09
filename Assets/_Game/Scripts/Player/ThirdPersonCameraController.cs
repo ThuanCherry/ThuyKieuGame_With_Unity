@@ -38,7 +38,14 @@ namespace ThuyKieu.Player
         [SerializeField] private LayerMask _collisionMask;
         public bool ControlLocked { get; set; }
         private Transform _dialogueCue;
-        public void SetDialogueCue(Transform preset) { _dialogueCue = preset; }
+        private bool _snapToCue;
+        public void SetDialogueCue(Transform preset)
+        {
+            if (preset == _dialogueCue) return;
+            _dialogueCue = preset;
+            // A cut between rooms is preferable to interpolating into a partition and getting stuck.
+            _snapToCue = preset != null && Physics.Linecast(transform.position, preset.position, _collisionMask, QueryTriggerInteraction.Ignore);
+        }
 
         private void Awake()
         {
@@ -67,6 +74,12 @@ namespace ThuyKieu.Player
                 Vector3 shotPosition = _dialogueCue.position;
                 if (target != null && _dialogueCue.IsChildOf(target.root))
                     shotPosition = ResolveObstruction(target.position, shotPosition);
+                if (_snapToCue && !Physics.CheckSphere(shotPosition, .15f, _collisionMask, QueryTriggerInteraction.Ignore))
+                {
+                    transform.SetPositionAndRotation(shotPosition, _dialogueCue.rotation);
+                    _snapToCue = false;
+                    return;
+                }
                 Vector3 nextPosition = Vector3.Lerp(transform.position, shotPosition, 1 - Mathf.Exp(-5 * Time.deltaTime));
                 transform.position = ResolveObstruction(transform.position, nextPosition);
                 transform.rotation = Quaternion.Slerp(transform.rotation, _dialogueCue.rotation, 1 - Mathf.Exp(-5 * Time.deltaTime));
@@ -94,9 +107,11 @@ namespace ThuyKieu.Player
                     out RaycastHit obstruction, distance, _collisionMask, QueryTriggerInteraction.Ignore))
                 desiredPosition = pivot - rotation * Vector3.forward * Mathf.Max(0.3f, obstruction.distance - 0.1f);
 
-            transform.position = followSmoothTime > 0f
+            Vector3 smoothedPosition = followSmoothTime > 0f
                 ? Vector3.SmoothDamp(transform.position, desiredPosition, ref followVelocity, followSmoothTime)
                 : desiredPosition;
+            // Smoothing must not put the lens back behind the obstruction just resolved above.
+            transform.position = ResolveObstruction(pivot, smoothedPosition);
 
             transform.rotation = rotation;
         }

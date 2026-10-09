@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "checks": [
+    "PASS: Player starts beside bed",
+    "PASS: Opening locks movement",
+    "PASS: Walked to waypoint 0 without teleport",
+    "PASS: Walked to waypoint 1 without teleport",
+    "PASS: Grounded throughout bedroom to hall route",
+    "PASS: No floor fallthrough",
+    "PASS: Story waits for Mother interaction"
+  ]
+}

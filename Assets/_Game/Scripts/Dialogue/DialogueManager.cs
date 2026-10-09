@@ -236,8 +236,23 @@ namespace ThuyKieu.Dialogue
             _inkActive = true;
             onConversationComplete = onComplete;
             DialogueStarted?.Invoke(null);
-            if (_pendingText != null) PublishInkLine();
+            if (_pendingText != null)
+            {
+                bool hasText = !string.IsNullOrWhiteSpace(_pendingText);
+                PublishInkLine();
+                if (!hasText) AdvanceInk();
+            }
             else AdvanceInk();
+        }
+
+        /// <summary>Enter an authored interaction knot while retaining the same Ink variables/state.</summary>
+        public void StartInkAt(string knot, Action onComplete = null)
+        {
+            if (IsDialogueActive || InkStory == null) return;
+            InkStory.ChoosePathString(knot);
+            _pendingText = null;
+            _pendingTags = null;
+            ResumeInk(onComplete);
         }
 
         private void AdvanceInk()
@@ -254,11 +269,17 @@ namespace ThuyKieu.Dialogue
                     EndDialogue();
                     return;
                 }
-                if (string.IsNullOrWhiteSpace(_pendingText)) continue;
                 if (InkPauseBeforeLine != null && InkPauseBeforeLine(_pendingTags))
                 {
                     EndDialogue();
                     return;
+                }
+                if (string.IsNullOrWhiteSpace(_pendingText))
+                {
+                    // Ink can emit only tags at DONE. Inventory/end cues must still run.
+                    InkTagsChanged?.Invoke(_pendingTags);
+                    _pendingText = null;
+                    continue;
                 }
                 PublishInkLine();
                 return;
@@ -271,17 +292,19 @@ namespace ThuyKieu.Dialogue
         {
             foreach (string tag in _pendingTags)
             {
-                if (!tag.StartsWith("speaker:")) continue;
-                switch (tag.Substring(8).Trim())
+                int separator = tag.IndexOf(':');
+                if (separator < 0 || tag.Substring(0, separator).Trim() != "speaker") continue;
+                switch (tag.Substring(separator + 1).Trim())
                 {
                     case "Kieu": _inkSpeaker = "Thúy Kiều"; break;
                     case "MeKieu": _inkSpeaker = "Mẹ Kiều"; break;
                     case "MaGiamSinh": _inkSpeaker = "Mã Giám Sinh"; break;
+                    case "Messenger": _inkSpeaker = "Người đưa tin"; break;
                     default: _inkSpeaker = "Dẫn chuyện"; break;
                 }
             }
             InkTagsChanged?.Invoke(_pendingTags);
-            LineChanged?.Invoke(_inkSpeaker, _pendingText);
+            if (!string.IsNullOrWhiteSpace(_pendingText)) LineChanged?.Invoke(_inkSpeaker, _pendingText);
             _pendingText = null;
             PublishInkChoices();
         }

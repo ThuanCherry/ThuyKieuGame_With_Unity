@@ -20,7 +20,7 @@ namespace ThuyKieu.Core.Editor
 {
     public static class Chapter01Setup
     {
-        public const string ScenePath = "Assets/_Game/Scenes/Chapter01_GiaBien.unity";
+        public const string ScenePath = "Assets/_Game/Scenes/Chapter01/Chapter01_GiaBien.unity";
         public const string UIPath = "Assets/_Game/Prefabs/UI/Chapter01DialogueCanvas.prefab";
         private const string ControllerPath = "Assets/_Game/Animations/ThuyKieu/Chapter01.controller";
         private static TMP_FontAsset _font;
