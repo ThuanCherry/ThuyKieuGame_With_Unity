@@ -70,6 +70,8 @@ namespace ThuyKieu.Core.Editor
                 Check(actor.GetComponentsInChildren<SkinnedMeshRenderer>(true).All(r=>r.sharedMesh!=null&&r.sharedMaterials.All(m=>m!=null&&m.shader!=null)),actor.name+" has mesh/material references");
             }
             Check(Find("MeKieu").GetComponentInChildren<Animator>().GetBool("IsSitting"),"Mẹ Kiều begins seated on her chair");
+            Check(!Find("MaContract").gameObject.activeInHierarchy && Find("DebtPaper").gameObject.activeInHierarchy,
+                "Only the debt paper is on the table before Ma arrives");
         }
         private static void Supply()
         {
@@ -104,8 +106,79 @@ namespace ThuyKieu.Core.Editor
                 if(_dialogue.IsDialogueActive)
                 {
                     _keys=Array.Empty<Key>();
+                    var uiCue=_dialogue.IsPresentationCueActive;
+                    if(uiCue) Once("Presentation cues hide the dialogue panel",!_ui.IsPanelVisible);
+                    if(uiCue)
+                    {
+                        var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+                        var focus=typeof(Chapter01Director).GetField("_reactionFocus",flags).GetValue(_director) as Transform;
+                        float until=(float)typeof(Chapter01Director).GetField("_reactionUntil",flags).GetValue(_director);
+                        float remaining=until-Time.time;
+                        if(focus!=null&&remaining>0&&remaining<.18f)
+                        {
+                            Vector3 direction=focus.position-_player.transform.position;direction.y=0;
+                            Once("Reaction faces "+focus.name,Vector3.Angle(_player.transform.forward,direction)<30);
+                        }
+                    }
+                    if(_ui.CurrentText=="@cue")Check(false,"Control marker leaked to dialogue");
+                    Once("Control marker is never shown as dialogue",_ui.CurrentText!="@cue");
+                    var cinematic=UnityEngine.Object.FindAnyObjectByType<ThirdPersonCameraController>();
+                    var contract=_director.GetComponent<Chapter01ContractPresentation>();
+                    var maAnimator=Find("MaGiamSinh").GetComponentInChildren<Animator>(true);
+                    if(maAnimator.gameObject.activeInHierarchy && maAnimator.GetCurrentAnimatorClipInfo(0).Any(c=>c.clip.name=="Informal Bowing"&&c.weight>.95f))
+                        Once("Ma plays the imported Bowing clip",true);
+                    if(Find("MaGiamSinh").gameObject.activeInHierarchy && !contract.Presented && !contract.IsActing)
+                        Once("Contract stays concealed during conversation",!Find("MaContract").gameObject.activeInHierarchy);
+                    if(Find("MaContract").gameObject.activeInHierarchy && !contract.Presented)
+                        Once("Ma takes the contract from his robe before placing it",Find("MaContract").IsChildOf(maAnimator.GetBoneTransform(HumanBodyBones.LeftHand)));
+                    if(contract.Presented)
+                    {
+                        Once("Contract reaches table after presentation",Vector3.Distance(Find("MaContract").position,Find("ContractOnTable").position)<.01f);
+                        Once("Ma stands outside the physical table edge",Find("MaGiamSinh").position.z + .3f < 1.984f);
+                    }
+                    var playerAnimator=_player.GetComponentInChildren<Animator>();
+                    int writingLayer=playerAnimator.GetLayerIndex("Standing writing");
+                    if(contract.IsWriting && writingLayer>=0 && playerAnimator.GetLayerWeight(writingLayer)>.95f && Find("SigningBrush").gameObject.activeInHierarchy)
+                    {
+                        Once("Kiều signs standing with grounded legs",!playerAnimator.GetBool("IsSitting") &&
+                            playerAnimator.GetBoneTransform(HumanBodyBones.Hips).position.y-_player.transform.position.y>.8f &&
+                            Vector3.Distance(_player.transform.position,Find("KieuStandingSign").position)<.01f);
+                        Once("Brush visible only during writing",Find("SigningBrush").gameObject.activeInHierarchy);
+                        ScreenCapture.CaptureScreenshot("Tools/Chapter01/ContractSigning.png");
+                    }
+                    var shot=cinematic.CurrentDialogueCue;
+                    if(_director.MaConversation&&shot!=null&&shot.name.StartsWith("Dialogue_Ma"))
+                    {
+                        string location=Find("MaGiamSinh").position.z < -2.5f ? "porch" : "hall";
+                        string shotKey=shot.name+" "+location;
+                        if(Seen.Add("Hold shot:"+shotKey)) _nextAdvance=Time.realtimeSinceStartup+1.2f;
+                        if(!cinematic.IsBlending&&Seen.Add("Validate shot:"+shotKey))
+                        {
+                            Check(Vector3.Distance(cinematic.transform.position,shot.position)<.08f,shot.name+" reaches preset");
+                            Check(!Physics.CheckSphere(cinematic.transform.position,.12f,1<<8,QueryTriggerInteraction.Ignore),shot.name+" lens clear");
+                            Check(Camera.main.fieldOfView>=35&&Camera.main.fieldOfView<=50,shot.name+" cinematic FOV");
+                            foreach(var name in new[]{"ThuyKieu","MaGiamSinh"})
+                            {
+                                if(shot.name=="Dialogue_MaKieu"&&name!="ThuyKieu"||shot.name=="Dialogue_MaGiamSinh"&&name!="MaGiamSinh")continue;
+                                var head=Find(name).GetComponentInChildren<Animator>().GetBoneTransform(HumanBodyBones.Head);
+                                var view=Camera.main.WorldToViewportPoint(head.position);
+                                Check(view.z>0&&view.x>.04f&&view.x<.96f&&view.y>.42f&&view.y<.94f,shot.name+" "+name+" face above UI "+view);
+                                Check(!Physics.Linecast(cinematic.transform.position,head.position,1<<8,QueryTriggerInteraction.Ignore),shot.name+" "+name+" face unobstructed");
+                            }
+                            ScreenCapture.CaptureScreenshot("Tools/Chapter01/"+shot.name+"_"+location+".png");
+                        }
+                    }
                     Once("Dialogue locks movement and interaction",_player.ControlLocked&&_interaction.ControlLocked);
-                    if(_ui.CurrentName=="Người đưa tin") Once("Messenger reports from doorway",true);
+                    var motherAnimator=Find("MeKieu").GetComponentInChildren<Animator>();
+                    if(motherAnimator.GetBool("DialogueTalking")&&motherAnimator.layerCount>1)
+                    {
+                        var clips=motherAnimator.GetCurrentAnimatorClipInfo(1);
+                        int emotion=motherAnimator.GetInteger("DialogueEmotion");
+                        string expected=emotion==1?"Crying":"Talking_with_one_hand";
+                        if(clips.Any(c=>c.weight>.95f&&c.clip.name==expected))
+                            Once("Seated mother plays "+expected,true);
+                    }
+                    if(_ui.CurrentName=="Người đưa tin") Once("Messenger reports visibly from doorway",Find("Messenger").gameObject.activeInHierarchy);
                     if(_ui.CurrentText.Contains("Màn hình vẫn"))
                         Once("Black screen during opening narration",Find("OpeningFade").GetComponent<CanvasGroup>().alpha>.99f);
                     if(_ui.CurrentText.Contains("Ánh sáng dần"))
@@ -144,6 +217,8 @@ namespace ThuyKieu.Core.Editor
                         if(_player.ControlLocked)
                         {
                             Once("Movement stays locked during Sit To Stand",true);
+                            Once("Standing keeps the authored camera cue",CinematicForOpening()!=null);
+                            Once("Standing camera clear of bed",!Physics.CheckSphere(Camera.main.transform.position,.12f,1<<8,QueryTriggerInteraction.Ignore));
                             return;
                         }
                         Once("Sit To Stand returns Kiều to idle before movement",!animator.GetBool("IsSitting"));
@@ -151,7 +226,7 @@ namespace ThuyKieu.Core.Editor
                     case Chapter01Director.Stage.Mother:
                         if(_player.transform.position.z>2.3f){Walk(new Vector3(-3.7f,0,1.85f));break;}
                         Once("Hallway reached by walking through the opened room door",_player.transform.position.z<2.3f);
-                        if(Walk(new Vector3(-2.5f,0,.6f)))PressExpected("MeKieu");break;
+                        if(Walk(new Vector3(-.6f,0,1.45f)))PressExpected("MeKieu");break;
                     case Chapter01Director.Stage.Explore:
                         if(_director.ClueCount==0)
                         {
@@ -168,14 +243,20 @@ namespace ThuyKieu.Core.Editor
                         else
                         {
                             Once("Two clues sufficient; third optional",_director.ClueCount==2&&!(bool)_dialogue.InkStory.variablesState["c1_xem_nu_trang"]);
-                            if(Walk(new Vector3(-2.5f,0,.6f)))PressExpected("MeKieu");
+                            if(Walk(new Vector3(-.6f,0,1.45f)))PressExpected("MeKieu");
                         }break;
                     case Chapter01Director.Stage.Door:
                         Once("Main door waits for E",!Find("MainDoor").GetComponent<ProximityDoor>().IsOpen);
+                        Once("Authored knock sequence plays exactly three hits",UnityEngine.Object.FindAnyObjectByType<Chapter01Audio>().KnockHitsPlayed==3);
                         if(Walk(new Vector3(-.4f,0,-1.1f)))PressExpected("MainDoorInteraction");break;
                     case Chapter01Director.Stage.Offer:
                         Once("Ma revealed only after door interaction",Find("MaGiamSinh").gameObject.activeInHierarchy);
-                        if(Walk(new Vector3(-2.5f,0,.6f))&&_interaction.CurrentTarget!=null)PressExpected("MeKieu");break;
+                        if(_director.CanInteract(Chapter01Director.Stage.Mother))
+                        {
+                            Vector3 facing=_player.transform.position-Find("MaGiamSinh").position;facing.y=0;
+                            Once("Ma faces Kiều after walking into hall",Vector3.Angle(Find("MaGiamSinh").forward,facing)<8);
+                        }
+                        if(Walk(new Vector3(-.6f,0,1.45f))&&_interaction.CurrentTarget!=null)PressExpected("MeKieu");break;
                     case Chapter01Director.Stage.Contract:
                         Once("Probe branch flag preserved",(bool)_dialogue.InkStory.variablesState["c1_hoi_400"]);
                         if(Walk(new Vector3(0,0,1.15f)))PressExpected("ContractTable");break;
@@ -221,6 +302,7 @@ namespace ThuyKieu.Core.Editor
             _keys=new[]{Key.E};_pulse=true;
         }
         private static Transform Find(string name)=>SceneManager.GetActiveScene().GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<Transform>(true)).First(t=>t.name==name);
+        private static Transform CinematicForOpening()=>UnityEngine.Object.FindAnyObjectByType<ThirdPersonCameraController>().CurrentDialogueCue;
         private static void Finish()
         {
             Running=false;InputSystem.onAfterUpdate-=Supply;EditorApplication.update-=Tick;Application.logMessageReceived-=Log;

@@ -13,3 +13,29 @@ AnimatorOverrideController:
     m_OverrideClip: {fileID: -203655887218126122, guid: e6da67cd03f4ae9439812c8389486c95, type: 3}
   - m_OriginalClip: {fileID: -203655887218126122, guid: 15637fa18eeb0f6468970f080bc9cd58, type: 3}
     m_OverrideClip: {fileID: -203655887218126122, guid: 19aa1f7d081374540bce77f5364ba6ae, type: 3}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 22cee2fbca42eda4fae4f4137ac9399b, type: 3}
+    m_OverrideClip: {fileID: 0}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: c5904bbcd39625b41a44e8e9d7995554, type: 3}
+    m_OverrideClip: {fileID: 0}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 2fe2bdba8753fc7438ca3364ada9019f, type: 3}
+    m_OverrideClip: {fileID: 0}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 8b6e6451119d80640af913ed70f2fb1d, type: 3}
+    m_OverrideClip: {fileID: 0}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: c59599f65164f184ea4e928ca1818140, type: 3}
+    m_OverrideClip: {fileID: 0}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 73817ab6b67c28d4bb6a167d5bdb3993, type: 3}
+    m_OverrideClip: {fileID: 0}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: db5afd5546994794eb71aa83327173ac, type: 3}
+    m_OverrideClip: {fileID: 0}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 022c78ffc5806d444b3a705548f30e40, type: 3}
+    m_OverrideClip: {fileID: 0}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: b00d7461e4bad5540b7a005063b19cad, type: 3}
+    m_OverrideClip: {fileID: 0}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 3c96e65eb3944234fb501246823196fb, type: 3}
+    m_OverrideClip: {fileID: 0}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 19c01e42f1557e8439ef32fd04b154e7, type: 3}
+    m_OverrideClip: {fileID: 0}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: e39234a16f2f383419091f7ed6e358b6, type: 3}
+    m_OverrideClip: {fileID: 0}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 44b6361222ec12d45b62b55434da8b4a, type: 3}
+    m_OverrideClip: {fileID: 0}

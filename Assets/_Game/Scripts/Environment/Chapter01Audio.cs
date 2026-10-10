@@ -15,10 +15,19 @@ namespace ThuyKieu.Environment
         [SerializeField] private PlayerMovement _player;
         [SerializeField] private AudioSource _musicSource, _rainSource, _windSource, _sfxSource, _uiSource, _footstepSource;
         [SerializeField] private AudioSource _cryingSource;
+        [SerializeField, Range(0, 1)] private float _cryingBedroomVolume = .18f;
+        [SerializeField, Range(0, 1)] private float _cryingHallVolume = .30f;
+        private Coroutine _cryingFade;
+        private float _cryingFadeGain = 1;
         [SerializeField] private AudioSource _thunderSource;
         [SerializeField] private Transform _cryingAnchor;
         [SerializeField] private AudioClip _paper, _doorOpen, _doorClose, _uiConfirm, _woodStep, _stoneStep;
         [SerializeField] private AudioClip _knock, _crying;
+        [SerializeField] private Transform _knockAnchor;
+        [SerializeField] private AudioSource _knockSource;
+        private float _knockDuckUntil;
+        private Coroutine _knockRoutine;
+        public int KnockHitsPlayed { get; private set; }
         private readonly HashSet<string> _missingCues = new HashSet<string>();
         private float _stepDistance;
         private float _musicVolume = .18f;
@@ -45,8 +54,14 @@ namespace ThuyKieu.Environment
             if (_director != null) _director.CueReceived -= OnCue;
             if (_dialogueUI != null) _dialogueUI.InteractionConfirmed -= PlayUI;
             if (_dialogueUI != null) _dialogueUI.CharacterRevealed -= PlayLetter;
-            foreach (var source in new[]{_musicSource, _rainSource, _windSource}) if (source != null) source.Stop();
+            foreach (var source in new[]{_musicSource, _rainSource, _windSource, _cryingSource}) if (source != null) source.Stop();
+            if (_cryingFade != null) StopCoroutine(_cryingFade);
+            _cryingFade = null;
+            _cryingFadeGain = 1;
             if (_thunderRoutine != null) StopCoroutine(_thunderRoutine);
+            if (_knockRoutine != null) StopCoroutine(_knockRoutine);
+            _knockRoutine = null;
+            if (_knockSource != null) _knockSource.Stop();
         }
         private static void StartLoop(AudioSource source)
         { if (source != null && source.clip != null && !source.isPlaying) { source.loop = true; source.Play(); } }
@@ -63,8 +78,8 @@ namespace ThuyKieu.Environment
                 switch (value)
                 {
                     case "rain_muffled": case "rain_room": case "rain_exterior": StartLoop(_rainSource); break;
-                    case "door_knock": StartCoroutine(Knock(1)); break;
-                    case "door_knock_double": StartCoroutine(Knock(2)); break;
+                    case "door_knock": BeginKnock(1); break;
+                    case "door_knock_double": BeginKnock(2); break;
                     case "door_open": break; // The actual door interaction supplies the sound.
                     case "woman_crying_distant":
                         StartCrying();
@@ -85,14 +100,17 @@ namespace ThuyKieu.Environment
             bool inside = Mathf.Abs(_player.transform.position.x) < 6.3f && _player.transform.position.z > -3.2f;
             bool bedroom = _player.transform.position.x < -2.1f && _player.transform.position.z > 2.5f;
             float blend = 1 - Mathf.Exp(-3 * Time.deltaTime);
-            if (_musicSource != null) _musicSource.volume = Mathf.Lerp(_musicSource.volume, _musicVolume, blend);
+            float musicVolume = _cryingSource != null && _cryingSource.isPlaying ? _musicVolume * .55f : _musicVolume;
+            if (Time.time < _knockDuckUntil) musicVolume *= .3f;
+            if (_musicSource != null) _musicSource.volume = Mathf.Lerp(_musicSource.volume, musicVolume, blend);
             if (_rainSource != null) _rainSource.volume = Mathf.Lerp(_rainSource.volume, bedroom ? .035f : inside ? .065f : .16f, blend);
             if (_windSource != null) _windSource.volume = Mathf.Lerp(_windSource.volume, inside ? .01f : .03f, blend);
             if (_cryingSource != null)
             {
                 if (_cryingAnchor != null) _cryingSource.transform.position = _cryingAnchor.position + Vector3.up * 1.25f;
-                float cryingVolume = bedroom ? .035f : inside ? .10f : .14f;
-                _cryingSource.volume = Mathf.Lerp(_cryingSource.volume, cryingVolume, blend);
+                float cryingVolume = bedroom ? _cryingBedroomVolume : inside ? _cryingHallVolume : _cryingBedroomVolume;
+                _cryingSource.volume = Mathf.Lerp(_cryingSource.volume, cryingVolume * _cryingFadeGain, blend);
+                if (_cryingFade != null) _cryingSource.volume = cryingVolume * _cryingFadeGain;
             }
             if (_player.ControlLocked || _controller == null || !_controller.isGrounded || _player.CurrentSpeed < .1f)
             { _stepDistance = 0; return; }
@@ -107,34 +125,54 @@ namespace ThuyKieu.Environment
         public void StopCrying()
         {
             if (_cryingSource == null || !_cryingSource.isPlaying) return;
-            StartCoroutine(FadeOutCrying());
+            if (_cryingFade == null) _cryingFade = StartCoroutine(FadeOutCrying());
         }
         private void StartCrying()
         {
             if (_crying == null) { Missing("woman_crying_distant"); return; }
             if (_cryingSource == null) { PlayAt(_crying, _cryingAnchor != null ? _cryingAnchor.position : Vector3.zero); return; }
+            if (_cryingFade != null) StopCoroutine(_cryingFade);
+            _cryingFade = null;
+            _cryingFadeGain = 1;
             _cryingSource.clip = _crying;
             _cryingSource.loop = _crying.length > 3f;
             _cryingSource.spatialBlend = 1f;
-            _cryingSource.minDistance = 1.5f;
+            _cryingSource.minDistance = 3f;
             _cryingSource.maxDistance = 18f;
+            _cryingSource.dopplerLevel = 0;
             if (!_cryingSource.isPlaying) _cryingSource.Play();
         }
         private IEnumerator FadeOutCrying()
         {
-            float initial = _cryingSource.volume;
             for (float elapsed = 0; elapsed < .65f; elapsed += Time.deltaTime)
             {
-                _cryingSource.volume = Mathf.Lerp(initial, 0, elapsed / .65f);
+                _cryingFadeGain = 1 - elapsed / .65f;
                 yield return null;
             }
+            _cryingSource.volume = 0;
             _cryingSource.Stop();
-            _cryingSource.volume = initial;
+            _cryingFade = null;
+            _cryingFadeGain = 1;
         }
         private IEnumerator Knock(int count)
         {
-            if (_knock == null) { Missing("door_knock"); yield break; }
-            for (int i = 0; i < count; i++) { PlayAt(_knock, new Vector3(0, 1.2f, -2.5f)); yield return new WaitForSeconds(.35f); }
+            if (_knock == null || _knockSource == null) { Missing("door_knock"); yield break; }
+            _knockSource.transform.position = _knockAnchor != null ? _knockAnchor.position + Vector3.up * 1.2f : new Vector3(0, 1.2f, -2.5f);
+            for (int i = 0; i < count; i++)
+            {
+                _knockDuckUntil = Time.time + .75f;
+                // Duck immediately: a short transient can finish before the normal music fade.
+                if (_musicSource != null) _musicSource.volume = Mathf.Min(_musicSource.volume, _musicVolume * .3f);
+                _knockSource.PlayOneShot(_knock);
+                KnockHitsPlayed++;
+                yield return new WaitForSeconds(.35f);
+            }
+            _knockRoutine = null;
+        }
+        private void BeginKnock(int count)
+        {
+            if (_knockRoutine != null) return;
+            _knockRoutine = StartCoroutine(Knock(count));
         }
         private IEnumerator ThunderAmbience()
         {

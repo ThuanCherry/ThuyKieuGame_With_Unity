@@ -1,0 +1,8 @@
+﻿{
+    "passed":  true,
+    "screen":  "1920x891 (Free Aspect)",
+    "authoredLines":  222,
+    "revealSamples":  2029,
+    "maximumBaselineDrift":  0,
+    "uiReport":  "Tools/Chapter01/ReworkUIReport.json"
+}

@@ -30,22 +30,28 @@ namespace ThuyKieu.Core
         [SerializeField] private ProximityDoor _mainDoor;
         [SerializeField] private Transform _mother, _maPorch, _maHall, _messengerAnchor;
         [SerializeField] private GameObject _moneyChest;
+        [SerializeField] private GameObject _messenger;
         [SerializeField] private GameObject _gameplayHints;
         [SerializeField] private Button _standUpButton;
         [SerializeField] private Animator _playerAnimator;
         [SerializeField] private Chapter01Audio _audio;
         [SerializeField] private Transform _openingCamera;
         [SerializeField] private Transform _standingAfterSeat;
+        [SerializeField] private Chapter01ContractPresentation _contractPresentation;
         [SerializeField, Min(5)] private float _waitSeconds = 8;
         private Coroutine _fadeRoutine, _maWalk;
-        private bool _chapterEndRequested, _transitioning, _maMoving, _openingStandComplete;
+        private bool _chapterEndRequested, _transitioning, _maMoving, _openingStandComplete, _standingUp;
         private float _waitUntil;
         private string _speaker = "Narrator";
         private Vector3 _maDestination;
+        private Transform _reactionFocus;
+        private float _reactionUntil;
 
         public Stage CurrentStage { get; private set; }
         public string LogicalScene { get; private set; }
         public bool DialogueActive => _dialogue != null && _dialogue.IsDialogueActive;
+        public bool MotherConversation { get; private set; }
+        public bool MaConversation { get; private set; }
         public int ClueCount => _dialogue.InkStory == null ? 0 : (int)_dialogue.InkStory.variablesState["c1_clues"];
         public event Action<string, string> CueReceived;
 
@@ -56,13 +62,14 @@ namespace ThuyKieu.Core
             SetSitting(_playerAnimator, true);
             _player.PositionLocked = true;
             SetSitting(_motherAnimator, true);
-            if (_openingCamera != null) _camera.SetDialogueCue(_openingCamera);
+            if (_openingCamera != null) _camera.BeginCinematicDialogue(_openingCamera);
             _fade.alpha = 1;
             // Fade sits behind dialogue so the opening narration remains readable on black.
             _fade.blocksRaycasts = false;
             _completionPanel.SetActive(false);
             if (_gameplayHints != null) _gameplayHints.SetActive(false);
             _maGiamSinh.SetActive(false);
+            if (_messenger != null) _messenger.SetActive(false);
             if (_moneyChest != null) _moneyChest.SetActive(false);
             if (_standUpButton != null)
             {
@@ -89,19 +96,27 @@ namespace ThuyKieu.Core
 
         private void Update()
         {
+            if (_contractPresentation != null && _contractPresentation.IsActing) return;
             if (!_openingStandComplete && _standUpButton != null && _standUpButton.gameObject.activeInHierarchy
                 && InputReader.InteractPressedThisFrame)
                 StandUp();
             if (CurrentStage == Stage.Waiting && !DialogueActive && Time.time >= _waitUntil)
                 ResumeGate();
+            if (!_maMoving && _maGiamSinh.activeInHierarchy &&
+                (DialogueActive || CurrentStage == Stage.Offer || CurrentStage == Stage.Contract || CurrentStage == Stage.Waiting))
+                Face(_maGiamSinh.transform, _player.transform.position, 180);
             if (!DialogueActive || _maMoving) return;
-            Transform focus = _speaker == "MaGiamSinh" ? _maGiamSinh.transform
+            if (_reactionFocus != null && Time.time < _reactionUntil)
+            {
+                Face(_player.transform, _reactionFocus.position, 240);
+                return;
+            }
+            Transform focus = MotherConversation ? _mother : MaConversation ? _maGiamSinh.transform : _speaker == "MaGiamSinh" ? _maGiamSinh.transform
                 : _speaker == "MeKieu" ? _mother : _speaker == "Messenger" ? _messengerAnchor : _player.transform;
             if (focus != null && focus != _player.transform) Face(_player.transform, focus.position, 130);
             // A seated actor keeps the chair's orientation instead of rotating through its geometry.
             if (_mother != null && focus != _mother && (_motherAnimator == null || !_motherAnimator.GetBool("IsSitting")))
                 Face(_mother, focus.position, 95);
-            if (_maGiamSinh.activeInHierarchy && focus != _maGiamSinh.transform) Face(_maGiamSinh.transform, focus.position, 95);
         }
 
         private bool PauseBeforeLine(string[] tags)
@@ -130,6 +145,7 @@ namespace ThuyKieu.Core
                         break;
                     case "exit":
                         SetStage(Stage.Exit, "Tạm biệt Mẹ · bước ra ngoài hiên");
+                        if (_messenger != null) _messenger.SetActive(false);
                         WalkMa(_maPorch.position);
                         break;
                     default: Debug.LogWarning("Unknown Chapter 1 gate: " + tag, this); return false;
@@ -141,7 +157,7 @@ namespace ThuyKieu.Core
 
         public bool CanInteract(Stage stage)
         {
-            if (DialogueActive || _transitioning) return false;
+            if (DialogueActive || _transitioning || _standingUp || !_openingStandComplete) return false;
             if (stage == Stage.Mother)
                 return CurrentStage == Stage.Mother || CurrentStage == Stage.Offer && !_maMoving || CurrentStage == Stage.Explore && ClueCount >= 2;
             if (stage == Stage.Exit && _player.transform.position.z > -4.8f) return false;
@@ -151,6 +167,9 @@ namespace ThuyKieu.Core
         public void Interact(Stage stage, Transform target)
         {
             if (!CanInteract(stage)) return;
+            MotherConversation = stage == Stage.Mother &&
+                (CurrentStage == Stage.Mother || CurrentStage == Stage.Explore);
+            MaConversation = CurrentStage == Stage.Door || CurrentStage == Stage.Offer || CurrentStage == Stage.Contract;
             if (CurrentStage == Stage.Hallway && target.TryGetComponent(out ProximityDoor roomDoor))
             {
                 roomDoor.SetStoryOpen(true);
@@ -166,7 +185,11 @@ namespace ThuyKieu.Core
             if (CurrentStage == Stage.Door)
             {
                 _mainDoor.SetStoryOpen(true);
+                _maGiamSinh.transform.SetPositionAndRotation(_maPorch.position, _maPorch.rotation);
                 _maGiamSinh.SetActive(true);
+                if (_maAnimator != null) _maAnimator.Update(0);
+                Vector3 facing = _player.transform.position - _maGiamSinh.transform.position; facing.y = 0;
+                if (facing.sqrMagnitude > .01f) _maGiamSinh.transform.rotation = Quaternion.LookRotation(facing);
                 if (_moneyChest != null) _moneyChest.SetActive(true);
             }
             if (CurrentStage == Stage.Mother && _audio != null) _audio.StopCrying();
@@ -175,13 +198,20 @@ namespace ThuyKieu.Core
 
         private void StandUp()
         {
-            if (_openingStandComplete || _standUpButton == null) return;
+            if (_openingStandComplete || _standingUp || _standUpButton == null || !_standUpButton.gameObject.activeInHierarchy) return;
+            _standingUp = true;
             _standUpButton.gameObject.SetActive(false);
             StartCoroutine(PlayStandUp());
         }
 
         private IEnumerator PlayStandUp()
         {
+            Vector3 startPosition = _player.transform.position;
+            Vector3 endPosition = _standingAfterSeat != null ? _standingAfterSeat.position : startPosition;
+            var controller = _player.GetComponent<CharacterController>();
+            // The authored seated capsule overlaps the mattress; prevent depenetration while
+            // transferring to the clear standing marker, then restore the controller once.
+            controller.enabled = false;
             if (_playerAnimator != null)
             {
                 _playerAnimator.ResetTrigger("Stand");
@@ -190,12 +220,20 @@ namespace ThuyKieu.Core
                 float duration = 1f;
                 foreach (var clip in _playerAnimator.runtimeAnimatorController.animationClips)
                     if (clip.name == "Sit To Stand") { duration = Mathf.Max(duration, clip.length); break; }
-                yield return new WaitForSeconds(duration + .1f);
+                for (float elapsed = 0; elapsed < duration + .1f; elapsed += Time.deltaTime)
+                {
+                    float progress = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(duration * .55f, duration, elapsed));
+                    _player.transform.position = Vector3.Lerp(startPosition, endPosition, progress);
+                    yield return null;
+                }
                 SetSitting(_playerAnimator, false);
+                _playerAnimator.Play("Idle", 0);
             }
             _openingStandComplete = true;
             if (_standingAfterSeat != null)
                 _player.transform.SetPositionAndRotation(_standingAfterSeat.position, _standingAfterSeat.rotation);
+            controller.enabled = true;
+            _standingUp = false;
             _player.PositionLocked = false;
             _camera.SetDialogueCue(null);
             SetStage(Stage.Hallway, "Tìm Mẹ Kiều");
@@ -205,6 +243,7 @@ namespace ThuyKieu.Core
 
         private void ResumeGate()
         {
+            if (CurrentStage == Stage.Waiting) MaConversation = true;
             SetStage(Stage.Negotiation, "");
             _dialogue.ResumeInk();
         }
@@ -222,6 +261,7 @@ namespace ThuyKieu.Core
         private void RouteTags(string[] tags)
         {
             string emotion = "";
+            bool greeting = false;
             foreach (string raw in tags)
             {
                 int colon = raw.IndexOf(':');
@@ -243,7 +283,27 @@ namespace ThuyKieu.Core
                         if (value == "short_time_pass") StartCoroutine(ShortTimePass());
                         else Debug.LogWarning("Unknown transition cue: " + value, this);
                         break;
-                    case "speaker": _speaker = value; break;
+                    case "speaker":
+                        _speaker = value;
+                        if (value == "Messenger" && _messenger != null)
+                        {
+                            _messenger.SetActive(true);
+                            Vector3 direction = _player.transform.position - _messenger.transform.position; direction.y = 0;
+                            if (direction.sqrMagnitude > .01f) _messenger.transform.rotation = Quaternion.LookRotation(direction);
+                        }
+                        break;
+                    case "staging":
+                        if (value == "ma_greeting") { if (_contractPresentation != null) _contractPresentation.Bow(); else greeting = true; break; }
+                        if (value == "present_contract") { if (_contractPresentation != null) _contractPresentation.Present(); break; }
+                        _reactionFocus = value == "look_at_door" ? _mainDoor.transform
+                            : value == "look_at_mother" ? _mother : value == "look_at_ma" ? _maGiamSinh.transform : null;
+                        if (_reactionFocus == null) { Debug.LogWarning("Unknown staging cue: " + value, this); break; }
+                        float hold = 1f;
+                        foreach (string cue in tags)
+                            if (cue.StartsWith("wait:") && float.TryParse(cue.Substring(5), System.Globalization.NumberStyles.Float,
+                                System.Globalization.CultureInfo.InvariantCulture, out float seconds)) hold = seconds;
+                        _reactionUntil = Time.time + hold;
+                        break;
                     case "emotion": emotion = value; break;
                     case "camera":
                         if (value == "Fade_Black") FadeTo(1, 0);
@@ -263,18 +323,22 @@ namespace ThuyKieu.Core
             SetAnimation(_player.GetComponentInChildren<Animator>(), _speaker == "Kieu", gesture);
             bool awaitingMother = CurrentStage == Stage.Opening || CurrentStage == Stage.Hallway || CurrentStage == Stage.Mother;
             SetAnimation(_motherAnimator, awaitingMother || _speaker == "MeKieu", awaitingMother ? 1 : gesture);
-            if (!_maMoving) SetAnimation(_maAnimator, _speaker == "MaGiamSinh", gesture);
+            if (!_maMoving) SetAnimation(_maAnimator, _speaker == "MaGiamSinh", greeting ? 3 : 0);
+            if (_messenger != null) SetAnimation(_messenger.GetComponentInChildren<Animator>(), _speaker == "Messenger", 0);
             if (Array.Exists(tags, t => t.Trim() == "camera:Insert_Signing"))
-                SetAnimation(_player.GetComponentInChildren<Animator>(), true, 6);
+            {
+                SetAnimation(_player.GetComponentInChildren<Animator>(), false, 0);
+                if (_contractPresentation != null) _contractPresentation.Sign();
+            }
         }
 
         private static int EmotionGesture(string emotion)
         {
-            if (emotion.Contains("crying") || emotion.StartsWith("broken") || emotion == "holding_tears") return 1;
-            if (emotion.Contains("annoyed") || emotion == "irritated_hidden" || emotion == "cold") return 2;
+            if (emotion.Contains("crying") || emotion.StartsWith("broken")) return 1;
+            if (emotion.Contains("annoyed") || emotion == "irritated_hidden") return 2;
             if (emotion == "satisfied" || emotion == "gently_smiling") return 3;
-            if (emotion == "defensive" || emotion == "caught_off_guard" || emotion == "determined") return 4;
-            return emotion == "thoughtful" || emotion == "suspicious" ? 5 : 0;
+            if (emotion == "defensive" || emotion == "caught_off_guard") return 4;
+            return 0;
         }
 
         private static string ObjectiveLabel(string value)
@@ -331,13 +395,21 @@ namespace ThuyKieu.Core
                     {
                         Face(_maGiamSinh.transform, waypoint, 160);
                         _maGiamSinh.transform.position = Vector3.MoveTowards(_maGiamSinh.transform.position, waypoint, 1.35f * Time.deltaTime);
-                        if (_maAnimator != null) _maAnimator.SetFloat("Speed", .5f);
+                        if (_maAnimator != null) _maAnimator.SetFloat("Speed", .5f, .12f, Time.deltaTime);
                     }
                     else if (_maAnimator != null) _maAnimator.SetFloat("Speed", 0);
                     yield return null;
                 }
             }
             if (_maAnimator != null) _maAnimator.SetFloat("Speed", 0);
+            for (float elapsed = 0; elapsed < 1.5f; elapsed += Time.deltaTime)
+            {
+                Vector3 facing = _player.transform.position - _maGiamSinh.transform.position; facing.y = 0;
+                if (facing.sqrMagnitude < .01f || Vector3.Angle(_maGiamSinh.transform.forward, facing) < 3) break;
+                Face(_maGiamSinh.transform, _player.transform.position, 180);
+                yield return null;
+            }
+            SetAnimation(_maAnimator, DialogueActive && _speaker == "MaGiamSinh", 0);
             _maMoving = false;
             _maWalk = null;
         }
@@ -356,6 +428,9 @@ namespace ThuyKieu.Core
         }
         private void OnDialogueEnded()
         {
+            _reactionFocus = null;
+            MotherConversation = false;
+            MaConversation = false;
             SetAnimation(_player.GetComponentInChildren<Animator>(), false, 0);
             bool awaitingMother = CurrentStage == Stage.Hallway || CurrentStage == Stage.Mother;
             SetAnimation(_motherAnimator, awaitingMother, awaitingMother ? 1 : 0);

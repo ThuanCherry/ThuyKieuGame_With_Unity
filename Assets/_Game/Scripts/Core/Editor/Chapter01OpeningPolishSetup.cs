@@ -37,7 +37,7 @@ namespace ThuyKieu.Core.Editor
             PositionMotherOnExistingSeat(house.Find("MainHall"), mother);
             CreateDisturbance(house.Find("MainHall"));
             var motherAnimator = mother.GetComponentInChildren<Animator>();
-            motherAnimator.runtimeAnimatorController = playerAnimator.runtimeAnimatorController;
+            motherAnimator.runtimeAnimatorController = ThuyKieu.Dialogue.Editor.Chapter01SharedAnimationSetup.GetController();
             SetSitting(motherAnimator, true);
             ConfigureStandButton(director);
             ConfigureCryingAudio(audio, mother);
@@ -154,7 +154,7 @@ namespace ThuyKieu.Core.Editor
             label.fontSize = 28;
             label.alignment = TextAlignmentOptions.Center;
             label.color = Color.white;
-            label.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/_Game/UI/Fonts/ChapterVietnamese.asset");
+            label.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/VietnameseTMP.asset");
             Set(director, "_standUpButton", button);
         }
 

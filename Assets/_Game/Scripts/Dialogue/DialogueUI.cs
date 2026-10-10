@@ -56,6 +56,7 @@ namespace ThuyKieu.Dialogue
                 manager.LineChanged += HandleLineChanged;
                 manager.ChoicesChanged += HandleChoicesChanged;
                 manager.DialogueEnded += HandleDialogueEnded;
+                manager.PresentationCueChanged += HandlePresentationCue;
             }
 
             if (continueButton != null)
@@ -74,6 +75,7 @@ namespace ThuyKieu.Dialogue
                 manager.LineChanged -= HandleLineChanged;
                 manager.ChoicesChanged -= HandleChoicesChanged;
                 manager.DialogueEnded -= HandleDialogueEnded;
+                manager.PresentationCueChanged -= HandlePresentationCue;
             }
 
             if (continueButton != null)
@@ -153,11 +155,17 @@ namespace ThuyKieu.Dialogue
 
         private void HandleDialogueStarted(DialogueData data)
         {
-            SetPanelVisible(true);
+            SetPanelVisible(false);
+        }
+
+        private void HandlePresentationCue(bool active)
+        {
+            if (active) SetPanelVisible(false);
         }
 
         private void HandleLineChanged(string speaker, string text)
         {
+            SetPanelVisible(true);
             if (_speakerText != null) _speakerText.text = speaker;
             if (_bodyText != null) _bodyText.text = text;
             if (_bodyText != null)
@@ -194,6 +202,8 @@ namespace ThuyKieu.Dialogue
 
                 return;
             }
+
+            SetPanelVisible(true);
 
             if (continueButton != null)
             {

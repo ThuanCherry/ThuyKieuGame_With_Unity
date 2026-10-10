@@ -2,7 +2,7 @@
     "passed": true,
     "staticAtlas": true,
     "composedAndDecomposed": true,
-    "requiredCharacters": 430,
+    "requiredCharacters": 434,
     "atlasCount": 1,
     "atlasWidth": 2048,
     "atlasHeight": 2048,

@@ -35,7 +35,7 @@ namespace ThuyKieu.Core.Editor
                     if (story.canContinue)
                     {
                         string text = story.Continue().Trim();
-                        if (text.Length > 0) allText.Add(text);
+                        if (text.Length > 0 && text != "@cue") allText.Add(text);
                         var tags = story.currentTags.ToArray();
                         foreach (var tag in tags)
                         {

@@ -39,9 +39,40 @@ namespace ThuyKieu.Player
         public bool ControlLocked { get; set; }
         private Transform _dialogueCue;
         private bool _snapToCue;
+        [Header("Cinematic dialogue")]
+        [SerializeField, Range(.4f, .8f)] private float _dialogueBlendSeconds = .65f;
+        [SerializeField, Range(35, 50)] private float _dialogueFieldOfView = 42;
+        [SerializeField, Min(0)] private float _rotationSmoothTime = .10f;
+        private Camera _lens;
+        private float _gameplayFieldOfView, _blendStarted, _blendFromFov;
+        private Vector3 _blendFromPosition;
+        private Quaternion _blendFromRotation;
+        private float _smoothedYaw, _smoothedPitch, _yawVelocity, _pitchVelocity;
+        private bool _cinematic, _returning;
+        public Transform CurrentDialogueCue => _dialogueCue;
+        public bool IsBlending => (_cinematic || _returning) && Time.time - _blendStarted < _dialogueBlendSeconds;
+        public void BeginCinematicDialogue(Transform preset)
+        {
+            _cinematic = true;
+            SetDialogueCue(preset);
+        }
+
+        private void StartBlend()
+        {
+            _blendStarted = Time.time;
+            _blendFromPosition = transform.position;
+            _blendFromRotation = transform.rotation;
+            _blendFromFov = _lens != null ? _lens.fieldOfView : 60;
+            followVelocity = Vector3.zero;
+        }
         public void SetDialogueCue(Transform preset)
         {
             if (preset == _dialogueCue) return;
+            if (_cinematic)
+            {
+                StartBlend();
+                if (preset == null) { _cinematic = false; _returning = true; }
+            }
             _dialogueCue = preset;
             // A cut between rooms is preferable to interpolating into a partition and getting stuck.
             _snapToCue = preset != null && Physics.Linecast(transform.position, preset.position, _collisionMask, QueryTriggerInteraction.Ignore);
@@ -57,6 +88,9 @@ namespace ThuyKieu.Player
             Vector3 euler = transform.eulerAngles;
             yaw = euler.y;
             pitch = Mathf.Clamp(NormalizeAngle(euler.x), minPitch, maxPitch);
+            _smoothedYaw = yaw; _smoothedPitch = pitch;
+            _lens = GetComponent<Camera>();
+            _gameplayFieldOfView = _lens != null ? _lens.fieldOfView : 60;
         }
 
         private void Start()
@@ -72,6 +106,11 @@ namespace ThuyKieu.Player
             if (ControlLocked && _dialogueCue != null)
             {
                 Vector3 shotPosition = _dialogueCue.position;
+                if (_cinematic)
+                {
+                    BlendTo(shotPosition, _dialogueCue.rotation, _dialogueFieldOfView);
+                    return;
+                }
                 if (target != null && _dialogueCue.IsChildOf(target.root))
                     shotPosition = ResolveObstruction(target.position, shotPosition);
                 if (_snapToCue && !Physics.CheckSphere(shotPosition, .15f, _collisionMask, QueryTriggerInteraction.Ignore))
@@ -92,7 +131,7 @@ namespace ThuyKieu.Player
 
             if (!ControlLocked) HandleCursorToggle();
 
-            if (!ControlLocked && Cursor.lockState == CursorLockMode.Locked)
+            if (!ControlLocked && !_returning && Cursor.lockState == CursorLockMode.Locked)
             {
                 Vector2 look = InputReader.Look * mouseSensitivity;
                 yaw += look.x;
@@ -100,12 +139,21 @@ namespace ThuyKieu.Player
                 pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
             }
 
-            Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
+            _smoothedYaw = Mathf.SmoothDampAngle(_smoothedYaw, yaw, ref _yawVelocity, _rotationSmoothTime);
+            _smoothedPitch = Mathf.SmoothDampAngle(_smoothedPitch, pitch, ref _pitchVelocity, _rotationSmoothTime);
+            Quaternion rotation = Quaternion.Euler(_smoothedPitch, _smoothedYaw, 0f);
             Vector3 pivot = target.position + targetOffset;
             Vector3 desiredPosition = pivot - rotation * Vector3.forward * distance;
             if (_collisionMask.value != 0 && Physics.SphereCast(pivot, 0.2f, -(rotation * Vector3.forward),
                     out RaycastHit obstruction, distance, _collisionMask, QueryTriggerInteraction.Ignore))
                 desiredPosition = pivot - rotation * Vector3.forward * Mathf.Max(0.3f, obstruction.distance - 0.1f);
+
+            if (_returning)
+            {
+                BlendTo(desiredPosition, rotation, _gameplayFieldOfView);
+                if (!IsBlending) _returning = false;
+                return;
+            }
 
             Vector3 smoothedPosition = followSmoothTime > 0f
                 ? Vector3.SmoothDamp(transform.position, desiredPosition, ref followVelocity, followSmoothTime)
@@ -114,6 +162,15 @@ namespace ThuyKieu.Player
             transform.position = ResolveObstruction(pivot, smoothedPosition);
 
             transform.rotation = rotation;
+        }
+
+        private void BlendTo(Vector3 position, Quaternion rotation, float fieldOfView)
+        {
+            float t = Mathf.SmoothStep(0, 1, Mathf.Clamp01((Time.time - _blendStarted) / _dialogueBlendSeconds));
+            Vector3 next = Vector3.Lerp(_blendFromPosition, position, t);
+            transform.position = ResolveObstruction(transform.position, next);
+            transform.rotation = Quaternion.Slerp(_blendFromRotation, rotation, t);
+            if (_lens != null) _lens.fieldOfView = Mathf.Lerp(_blendFromFov, fieldOfView, t);
         }
 
         private Vector3 ResolveObstruction(Vector3 origin, Vector3 destination)

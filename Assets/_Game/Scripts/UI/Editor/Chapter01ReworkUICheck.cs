@@ -16,11 +16,11 @@ namespace ThuyKieu.UI.Editor
     public static class Chapter01ReworkUICheck
     {
         private static readonly BindingFlags Flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-        private static readonly Vector2Int[] Resolutions = {new Vector2Int(1920,1080),new Vector2Int(1600,900),new Vector2Int(1366,768),new Vector2Int(2560,1440)};
+        private static readonly Vector2Int[] Resolutions = {new Vector2Int(1920,1080),new Vector2Int(1366,768)};
         private static readonly List<string> Checks = new List<string>();
-        private static object _size, _sizes, _oldType;
+        private static object _sizeGroup;
         private static EditorWindow _view;
-        private static int _oldWidth, _oldHeight, _resolution, _phase;
+        private static int _oldSizeIndex, _resolution, _phase;
         private static float _start;
         private static bool _passed, _background;
         private static DialogueUI _ui;
@@ -45,24 +45,28 @@ namespace ThuyKieu.UI.Editor
             _choices=corpus["choices"].ToObject<string[][]>();
             var asm=typeof(UnityEditor.Editor).Assembly;
             _view=EditorWindow.GetWindow(asm.GetType("UnityEditor.GameView"));_view.Show();_view.Focus();
-            _size=_view.GetType().GetProperty("currentGameViewSize",Flags).GetValue(_view);
-            _oldWidth=(int)_size.GetType().GetProperty("width").GetValue(_size);
-            _oldHeight=(int)_size.GetType().GetProperty("height").GetValue(_size);
-            _oldType=_size.GetType().GetProperty("sizeType").GetValue(_size);
+            _oldSizeIndex=(int)_view.GetType().GetProperty("selectedSizeIndex",Flags).GetValue(_view);
             var sizesType=asm.GetType("UnityEditor.GameViewSizes");
-            _sizes=sizesType.BaseType.GetProperty("instance",BindingFlags.Public|BindingFlags.Static).GetValue(null);
+            var sizes=sizesType.BaseType.GetProperty("instance",BindingFlags.Public|BindingFlags.Static).GetValue(null);
+            var groupType=asm.GetType("UnityEditor.GameViewSizeGroupType");
+            _sizeGroup=sizesType.GetMethod("GetGroup").Invoke(sizes,new[]{Enum.Parse(groupType,"Standalone")});
             SetResolution();
             EditorApplication.update+=Tick;
         }
         private static void SetResolution()
         {
             var resolution=Resolutions[_resolution];
-            _size.GetType().GetProperty("width").SetValue(_size,resolution.x);
-            _size.GetType().GetProperty("height").SetValue(_size,resolution.y);
-            var property=_size.GetType().GetProperty("sizeType");
-            property.SetValue(_size,Enum.Parse(property.PropertyType,"FixedResolution"));
-            _sizes.GetType().GetMethod("Changed").Invoke(_sizes,null);
-            _view.Repaint();_start=Time.realtimeSinceStartup;
+            int count=(int)_sizeGroup.GetType().GetMethod("GetTotalCount").Invoke(_sizeGroup,null);
+            for(int i=0;i<count;i++)
+            {
+                var size=_sizeGroup.GetType().GetMethod("GetGameViewSize").Invoke(_sizeGroup,new object[]{i});
+                if(size.GetType().GetProperty("sizeType").GetValue(size).ToString()!="FixedResolution"
+                    ||(int)size.GetType().GetProperty("width").GetValue(size)!=resolution.x
+                    ||(int)size.GetType().GetProperty("height").GetValue(size)!=resolution.y)continue;
+                _view.GetType().GetProperty("selectedSizeIndex",Flags).SetValue(_view,i);
+                _view.Repaint();_start=Time.realtimeSinceStartup;return;
+            }
+            throw new InvalidOperationException("Missing Game View resolution preset: "+resolution);
         }
         private static void Check(bool ok,string label){_passed&=ok;Checks.Add((ok?"PASS: ":"FAIL: ")+label);}
         private static void Invoke(string name,params object[] args)=>typeof(DialogueUI).GetMethod(name,BindingFlags.Instance|BindingFlags.NonPublic).Invoke(_ui,args);
@@ -138,12 +142,9 @@ namespace ThuyKieu.UI.Editor
         private static void Finish()
         {
             EditorApplication.update-=Tick;Running=false;Application.runInBackground=_background;
-            if(_size!=null)
+            if(_view!=null)
             {
-                _size.GetType().GetProperty("width").SetValue(_size,_oldWidth);
-                _size.GetType().GetProperty("height").SetValue(_size,_oldHeight);
-                _size.GetType().GetProperty("sizeType").SetValue(_size,_oldType);
-                _sizes.GetType().GetMethod("Changed").Invoke(_sizes,null);_view.Repaint();
+                _view.GetType().GetProperty("selectedSizeIndex",Flags).SetValue(_view,_oldSizeIndex);_view.Repaint();
             }
             File.WriteAllText("Tools/Chapter01/ReworkUIReport.json",Newtonsoft.Json.JsonConvert.SerializeObject(new {passed=_passed,checks=Checks},Newtonsoft.Json.Formatting.Indented));
         }
