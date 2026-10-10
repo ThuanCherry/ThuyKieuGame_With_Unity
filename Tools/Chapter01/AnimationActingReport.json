@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "seated": [
+    {
+      "gesture": "Talking_with_one_hand",
+      "hipsDelta": 0.0,
+      "footDelta": 0.0,
+      "rootDelta": 0.0,
+      "handDelta": 0.149899811,
+      "passed": true
+    },
+    {
+      "gesture": "Crying",
+      "hipsDelta": 0.0,
+      "footDelta": 0.0,
+      "rootDelta": 0.0,
+      "handDelta": 0.134951368,
+      "passed": true
+    }
+  ],
+  "greetingNod": true,
+  "greetingReturnsToTalking": true,
+  "compilerFailed": false
+}

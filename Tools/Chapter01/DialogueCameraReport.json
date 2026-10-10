@@ -1,0 +1,17 @@
+﻿[
+    {
+        "report":  "Tools/Chapter01/DialogueCameraReport_1920x1080.json",
+        "passed":  true,
+        "checks":  34
+    },
+    {
+        "report":  "Tools/Chapter01/DialogueCameraReport_1366x768.json",
+        "passed":  true,
+        "checks":  34
+    },
+    {
+        "report":  "Tools/Chapter01/ReworkUIReport.json",
+        "passed":  true,
+        "checks":  24
+    }
+]

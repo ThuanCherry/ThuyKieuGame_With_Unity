@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "actors": [
+    {
+      "actor": "Model",
+      "clip": "Talking_with_one_hand",
+      "sitting": false,
+      "passed": true
+    },
+    {
+      "actor": "Model",
+      "returnsToIdle": true
+    },
+    {
+      "actor": "RiggedModel",
+      "clip": "Talking_with_one_hand",
+      "sitting": false,
+      "passed": true
+    },
+    {
+      "actor": "RiggedModel",
+      "returnsToIdle": true
+    },
+    {
+      "actor": "Messenger",
+      "clip": "Talking_with_one_hand",
+      "sitting": false,
+      "passed": true
+    },
+    {
+      "actor": "Messenger",
+      "returnsToIdle": true
+    },
+    {
+      "actor": "MeThuyKieu_Rigged",
+      "clip": "Sitting Talking",
+      "sitting": true,
+      "passed": true
+    },
+    {
+      "actor": "MeThuyKieu_Rigged",
+      "returnsToIdle": true
+    }
+  ],
+  "compileFailed": false
+}

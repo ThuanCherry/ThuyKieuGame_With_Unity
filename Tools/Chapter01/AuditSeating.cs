@@ -1,0 +1,2 @@
+var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+return scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<Transform>(true)).Where(t => t.name.ToLower().Contains("chair") || t.name.ToLower().Contains("ghe")).Select(t => new {t.name, position=t.position.ToString(), rotation=t.eulerAngles.ToString(), renderers=t.GetComponentsInChildren<Renderer>().Select(r=>new {r.name, bounds=r.bounds.ToString(), materials=r.sharedMaterials.Select(m=>m.name).ToArray()}).ToArray()}).ToArray();

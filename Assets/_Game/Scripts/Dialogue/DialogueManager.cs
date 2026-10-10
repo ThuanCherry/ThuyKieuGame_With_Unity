@@ -24,6 +24,9 @@ namespace ThuyKieu.Dialogue
         private bool _inkActive;
         private string _pendingText;
         private string[] _pendingTags;
+        private Coroutine _cueRoutine;
+        public bool IsPresentationCueActive => _cueRoutine != null;
+        public event Action<bool> PresentationCueChanged;
         private string _inkSpeaker = "Dẫn chuyện";
         public Func<string[], bool> InkPauseBeforeLine;
         public Func<string[], bool> InkStopBeforeLine;
@@ -99,6 +102,7 @@ namespace ThuyKieu.Dialogue
         /// <summary>Continue button / continue key. Advances one line, or closes at the end.</summary>
         public void Advance()
         {
+            if (IsPresentationCueActive) return;
             if (_inkActive)
             {
                 if (!IsAtChoicePoint) AdvanceInk();
@@ -128,6 +132,7 @@ namespace ThuyKieu.Dialogue
         /// <summary>Follows a branch. Index refers to CurrentNode.Choices.</summary>
         public void SelectChoice(int choiceIndex)
         {
+            if (IsPresentationCueActive) return;
             if (_inkActive)
             {
                 if (choiceIndex < 0 || choiceIndex >= InkStory.currentChoices.Count) return;
@@ -168,6 +173,9 @@ namespace ThuyKieu.Dialogue
             }
 
             CurrentNode = null;
+            if (_cueRoutine != null) StopCoroutine(_cueRoutine);
+            _cueRoutine = null;
+            PresentationCueChanged?.Invoke(false);
             _inkActive = false;
             CurrentLineIndex = 0;
 
@@ -236,8 +244,24 @@ namespace ThuyKieu.Dialogue
             _inkActive = true;
             onConversationComplete = onComplete;
             DialogueStarted?.Invoke(null);
-            if (_pendingText != null) PublishInkLine();
+            if (_pendingText != null)
+            {
+                if (TryPresentationCue()) return;
+                bool hasText = !string.IsNullOrWhiteSpace(_pendingText);
+                PublishInkLine();
+                if (!hasText) AdvanceInk();
+            }
             else AdvanceInk();
+        }
+
+        /// <summary>Enter an authored interaction knot while retaining the same Ink variables/state.</summary>
+        public void StartInkAt(string knot, Action onComplete = null)
+        {
+            if (IsDialogueActive || InkStory == null) return;
+            InkStory.ChoosePathString(knot);
+            _pendingText = null;
+            _pendingTags = null;
+            ResumeInk(onComplete);
         }
 
         private void AdvanceInk()
@@ -254,11 +278,18 @@ namespace ThuyKieu.Dialogue
                     EndDialogue();
                     return;
                 }
-                if (string.IsNullOrWhiteSpace(_pendingText)) continue;
                 if (InkPauseBeforeLine != null && InkPauseBeforeLine(_pendingTags))
                 {
                     EndDialogue();
                     return;
+                }
+                if (TryPresentationCue()) return;
+                if (string.IsNullOrWhiteSpace(_pendingText))
+                {
+                    // Ink can emit only tags at DONE. Inventory/end cues must still run.
+                    InkTagsChanged?.Invoke(_pendingTags);
+                    _pendingText = null;
+                    continue;
                 }
                 PublishInkLine();
                 return;
@@ -271,19 +302,44 @@ namespace ThuyKieu.Dialogue
         {
             foreach (string tag in _pendingTags)
             {
-                if (!tag.StartsWith("speaker:")) continue;
-                switch (tag.Substring(8).Trim())
+                int separator = tag.IndexOf(':');
+                if (separator < 0 || tag.Substring(0, separator).Trim() != "speaker") continue;
+                switch (tag.Substring(separator + 1).Trim())
                 {
                     case "Kieu": _inkSpeaker = "Thúy Kiều"; break;
                     case "MeKieu": _inkSpeaker = "Mẹ Kiều"; break;
                     case "MaGiamSinh": _inkSpeaker = "Mã Giám Sinh"; break;
+                    case "Messenger": _inkSpeaker = "Người đưa tin"; break;
                     default: _inkSpeaker = "Dẫn chuyện"; break;
                 }
             }
             InkTagsChanged?.Invoke(_pendingTags);
-            LineChanged?.Invoke(_inkSpeaker, _pendingText);
+            if (!string.IsNullOrWhiteSpace(_pendingText)) LineChanged?.Invoke(_inkSpeaker, _pendingText);
             _pendingText = null;
             PublishInkChoices();
+        }
+
+        private bool TryPresentationCue()
+        {
+            if (_pendingText != "@cue") return false;
+            float seconds = .1f;
+            foreach (string tag in _pendingTags)
+                if (tag.StartsWith("wait:") && float.TryParse(tag.Substring(5),
+                    System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float value))
+                    seconds = Mathf.Clamp(value, .05f, 10f);
+            InkTagsChanged?.Invoke(_pendingTags);
+            _pendingText = null;
+            PresentationCueChanged?.Invoke(true);
+            _cueRoutine = StartCoroutine(ContinueAfterCue(seconds));
+            return true;
+        }
+
+        private System.Collections.IEnumerator ContinueAfterCue(float seconds)
+        {
+            yield return new WaitForSeconds(seconds);
+            _cueRoutine = null;
+            PresentationCueChanged?.Invoke(false);
+            if (_inkActive) AdvanceInk();
         }
 
         private void PublishInkChoices()

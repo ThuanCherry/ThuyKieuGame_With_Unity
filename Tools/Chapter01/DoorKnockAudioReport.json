@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "hits": 3,
+  "knockSourceRms": 0.086414500548449125,
+  "listenerMixRms": 0.090528827330644532,
+  "playingSamples": 103.0,
+  "musicDuringKnock": 0.038637008517980576,
+  "doorStillClosed": true
+}

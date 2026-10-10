@@ -1,0 +1,27 @@
+{
+  "hairpin": {
+    "passed": true,
+    "actors": [
+      {
+        "actor": "MeKieu",
+        "viewport": "(0.215, 0.616, 2.804)",
+        "unobstructed": true,
+        "visible": true
+      },
+      {
+        "actor": "ThuyKieu",
+        "viewport": "(0.791, 0.703, 2.791)",
+        "unobstructed": true,
+        "visible": true
+      }
+    ],
+    "panelHidden": true
+  },
+  "slipPause": {
+    "passed": true,
+    "authoredPause": true,
+    "continueBlocked": true,
+    "hidden": true,
+    "resumesToMa": true
+  }
+}

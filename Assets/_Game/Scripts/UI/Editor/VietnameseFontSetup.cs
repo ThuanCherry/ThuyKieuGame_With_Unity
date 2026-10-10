@@ -16,6 +16,7 @@ namespace ThuyKieu.UI.Editor
         public static string CharacterSet => new string(
             Enumerable.Range(32, 95).Concat(Enumerable.Range(0xA0, 0xE0))
                 .Concat(Enumerable.Range(0x1EA0, 90))
+                .Concat("\u01A0\u01A1\u01AF\u01B0".Select(c => (int)c))
                 .Concat("\u0300\u0301\u0303\u0309\u0323\u0306\u0302\u031B–—‘’“”•…₫←↑→↓".Select(c => (int)c))
                 .Distinct().Select(c => (char)c).ToArray());
 
@@ -50,6 +51,38 @@ namespace ThuyKieu.UI.Editor
             AssetDatabase.ImportAsset(FontPath, ImportAssetOptions.ForceUpdate);
             Validate();
             Export();
+        }
+
+        [MenuItem("ThuyKieu/Fonts/Repair portable Vietnamese TMP")]
+        public static void Repair()
+        {
+            if (Application.isPlaying) throw new InvalidOperationException("Exit Play Mode before repairing fonts.");
+            var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);
+            var source = AssetDatabase.LoadAssetAtPath<Font>("Assets/Fonts/LiberationSans.ttf");
+            if (font == null || source == null) throw new InvalidOperationException("Missing existing Vietnamese font or bundled source.");
+            if (FontEngine.LoadFontFace(source, 64) != FontEngineError.Success)
+                throw new InvalidOperationException("Unable to load bundled font face.");
+            var unsupported = CharacterSet.Where(c => !FontEngine.TryGetGlyphWithUnicodeValue(c,
+                GlyphLoadFlags.LOAD_NO_BITMAP, out _)).ToArray();
+            if (unsupported.Length > 0) throw new InvalidOperationException("Source font lacks: " + new string(unsupported));
+
+            // Rebuild all glyphs together: extending a cleared atlas invalidates old glyph rectangles.
+            var serialized = new SerializedObject(font);
+            serialized.FindProperty("m_SourceFontFile").objectReferenceValue = source;
+            serialized.FindProperty("m_SourceFontFileGUID").stringValue = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(source));
+            serialized.ApplyModifiedProperties();
+            font.atlasPopulationMode = AtlasPopulationMode.Dynamic;
+            font.ClearFontAssetData(false);
+            if (!font.TryAddCharacters(CharacterSet, out string missing))
+                throw new InvalidOperationException("Unable to bake required glyphs: " + missing);
+            font.atlasPopulationMode = AtlasPopulationMode.Static;
+            font.material.mainTexture = font.atlasTextures[0];
+            EditorUtility.SetDirty(font);
+            EditorUtility.SetDirty(font.material);
+            foreach (var texture in font.atlasTextures) EditorUtility.SetDirty(texture);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.ImportAsset(FontPath, ImportAssetOptions.ForceUpdate);
+            Validate();
         }
 
         [MenuItem("ThuyKieu/Fonts/Validate portable Vietnamese TMP")]

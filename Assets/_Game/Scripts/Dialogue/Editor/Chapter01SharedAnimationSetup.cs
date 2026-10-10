@@ -15,7 +15,7 @@ namespace ThuyKieu.Dialogue.Editor
     {
         public const string Folder = "Assets/_Game/Animations/Shared";
         public const string ControllerPath = Folder + "/Chapter01Shared.controller";
-        private static readonly string[] Names = { "Idle", "Walking", "Running", "Talking", "Crying", "Standing Arguing", "Agreeing", "Disagree", "Looking Around", "Picking Up Object", "Sitting Idle", "Sitting Talking", "Stand To Sit", "Sit To Stand" };
+        private static readonly string[] Names = { "Idle", "Walking", "Running", "Talking_with_one_hand", "Crying", "Standing Arguing", "Agreeing", "Disagree", "Looking Around", "Picking Up Object", "Sitting Idle", "Sitting Talking", "Stand To Sit", "Sit To Stand" };
 
         public static void ImportClips()
         {
@@ -32,7 +32,7 @@ namespace ThuyKieu.Dialogue.Editor
                 foreach (var clip in clips)
                 {
                     clip.name = name;
-                    clip.loopTime = name == "Idle" || name == "Walking" || name == "Running" || name == "Talking"
+                    clip.loopTime = name == "Idle" || name == "Walking" || name == "Running" || name == "Talking_with_one_hand"
                         || name == "Crying" || name == "Standing Arguing" || name == "Sitting Idle" || name == "Sitting Talking";
                     clip.loopPose = clip.loopTime;
                     clip.lockRootRotation = true; clip.lockRootHeightY = true; clip.lockRootPositionXZ = true;
@@ -44,7 +44,7 @@ namespace ThuyKieu.Dialogue.Editor
             }
         }
 
-        private static AnimationClip Clip(string name) => AssetDatabase.LoadAllAssetsAtPath(Folder + "/" + name + ".fbx")
+        private static AnimationClip Clip(string name) => AssetDatabase.LoadAllAssetsAtPath(Folder + "/" + (name == "Talking" ? "Talking_with_one_hand" : name) + ".fbx")
             .OfType<AnimationClip>().First(c => !c.name.StartsWith("__preview__"));
 
         public static AnimatorController GetController()
@@ -67,7 +67,7 @@ namespace ThuyKieu.Dialogue.Editor
                             : state.name == "Pickup" ? "Picking Up Object" : state.name == "SittingIdle" ? "Sitting Idle"
                             : state.name == "SittingTalking" ? "Sitting Talking" : state.name == "StandToSit" ? "Stand To Sit"
                             : state.name == "SitToStand" ? "Sit To Stand" : state.name;
-                        if (Names.Contains(clip)) state.motion = Clip(clip);
+                        if (Names.Contains(clip) || clip == "Talking") state.motion = Clip(clip);
                     }
                 }
                 foreach (var transition in existing.layers[0].stateMachine.anyStateTransitions)
@@ -76,6 +76,8 @@ namespace ThuyKieu.Dialogue.Editor
                     foreach (var transition in child.state.transitions)
                     { transition.hasFixedDuration = true; transition.duration = Mathf.Min(transition.duration, 0.15f); }
                 EditorUtility.SetDirty(existing);
+                ConfigureSeatedActing(existing);
+                ConfigureContractActing(existing);
                 return existing;
             }
             var controller = AnimatorController.CreateAnimatorControllerAtPath(ControllerPath);
@@ -126,7 +128,86 @@ namespace ThuyKieu.Dialogue.Editor
             var standFinish = standUp.AddTransition(idle); standFinish.hasExitTime = true; standFinish.exitTime = 0.95f;
             standUp.AddStateMachineBehaviour<DialogueGestureReturn>().Configure(0, true);
             EditorUtility.SetDirty(controller);
+            ConfigureSeatedActing(controller);
+            ConfigureContractActing(controller);
             return controller;
+        }
+
+        private static void ConfigureContractActing(AnimatorController controller)
+        {
+            var machine = controller.layers[0].stateMachine;
+            var layers = controller.layers; layers[0].iKPass = true; controller.layers = layers;
+            if (!controller.parameters.Any(p => p.name == "ContractActing"))
+                controller.AddParameter("ContractActing", AnimatorControllerParameterType.Bool);
+            // Authored actions must finish before ordinary dialogue can interrupt them.
+            foreach (var transition in machine.anyStateTransitions)
+                if (!transition.conditions.Any(c => c.parameter == "ContractActing"))
+                    transition.AddCondition(AnimatorConditionMode.IfNot, 0, "ContractActing");
+            foreach (string name in new[] { "Bowing", "Writing" })
+            {
+                var state = machine.states.Select(s => s.state).FirstOrDefault(s => s.name == name) ?? machine.AddState(name);
+                state.motion = Clip(name == "Bowing" ? "Informal Bowing" : "Writing");
+            }
+            if (!controller.layers.Any(l => l.name == "Standing writing"))
+            {
+                var mask = new AvatarMask { name = "Standing writing right arm" };
+                for (int i = 0; i < (int)AvatarMaskBodyPart.LastBodyPart; i++)
+                    mask.SetHumanoidBodyPartActive((AvatarMaskBodyPart)i, false);
+                mask.SetHumanoidBodyPartActive(AvatarMaskBodyPart.RightArm, true);
+                mask.SetHumanoidBodyPartActive(AvatarMaskBodyPart.RightFingers, true);
+                AssetDatabase.AddObjectToAsset(mask, controller);
+                var upper = new AnimatorStateMachine { name = "Standing writing" };
+                AssetDatabase.AddObjectToAsset(upper, controller);
+                var writing = upper.AddState("Writing"); writing.motion = Clip("Writing"); upper.defaultState = writing;
+                controller.AddLayer(new AnimatorControllerLayer { name = "Standing writing", stateMachine = upper,
+                    avatarMask = mask, defaultWeight = 0, iKPass = true, blendingMode = AnimatorLayerBlendingMode.Override });
+            }
+            EditorUtility.SetDirty(controller);
+        }
+
+        private static void ConfigureSeatedActing(AnimatorController controller)
+        {
+            // The chair pose owns hips/legs; standing speech and crying supply only arms/head.
+            var baseTalk = controller.layers[0].stateMachine.states.First(s => s.state.name == "SittingTalking").state;
+            baseTalk.motion = Clip("Sitting Idle");
+            const string layerName = "Seated acting";
+            if (controller.layers.Any(l => l.name == layerName)) return;
+            var mask = AssetDatabase.LoadAllAssetsAtPath(ControllerPath).OfType<AvatarMask>()
+                .FirstOrDefault(m => m.name == "Seated dialogue upper body");
+            if (mask == null)
+            {
+                mask = new AvatarMask { name = "Seated dialogue upper body" };
+                AssetDatabase.AddObjectToAsset(mask, controller);
+            }
+            for (int i = 0; i < (int)AvatarMaskBodyPart.LastBodyPart; i++)
+                mask.SetHumanoidBodyPartActive((AvatarMaskBodyPart)i, false);
+            foreach (var part in new[] { AvatarMaskBodyPart.Head, AvatarMaskBodyPart.LeftArm,
+                AvatarMaskBodyPart.RightArm, AvatarMaskBodyPart.LeftFingers, AvatarMaskBodyPart.RightFingers })
+                mask.SetHumanoidBodyPartActive(part, true);
+            EditorUtility.SetDirty(mask);
+            var machine = new AnimatorStateMachine { name = layerName };
+            AssetDatabase.AddObjectToAsset(machine, controller);
+            controller.AddLayer(new AnimatorControllerLayer { name = layerName, stateMachine = machine,
+                avatarMask = mask, defaultWeight = 1, blendingMode = AnimatorLayerBlendingMode.Override });
+            var silent = machine.AddState("Silent"); machine.defaultState = silent;
+            foreach (bool crying in new[] { false, true })
+            {
+                var state = machine.AddState(crying ? "Crying" : "Talking");
+                state.motion = Clip(crying ? "Crying" : "Talking");
+                var enter = machine.AddAnyStateTransition(state);
+                enter.hasExitTime = false; enter.canTransitionToSelf = false;
+                enter.hasFixedDuration = true; enter.duration = .2f;
+                enter.AddCondition(AnimatorConditionMode.If, 0, "IsSitting");
+                enter.AddCondition(AnimatorConditionMode.If, 0, "DialogueTalking");
+                enter.AddCondition(crying ? AnimatorConditionMode.Equals : AnimatorConditionMode.NotEqual, 1, "DialogueEmotion");
+                foreach (string parameter in new[] { "IsSitting", "DialogueTalking" })
+                {
+                    var exit = state.AddTransition(silent);
+                    exit.hasExitTime = false; exit.hasFixedDuration = true; exit.duration = .2f;
+                    exit.AddCondition(AnimatorConditionMode.IfNot, 0, parameter);
+                }
+            }
+            EditorUtility.SetDirty(controller);
         }
 
         [MenuItem("ThuyKieu/Chapter 1/Apply shared animations")]

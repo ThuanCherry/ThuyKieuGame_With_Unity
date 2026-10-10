@@ -1,0 +1,438 @@
+{
+  "scene": "Assets/_Game/Scenes/Chapter01/Chapter01_GiaBien.unity",
+  "actors": [
+    {
+      "name": "RiggedModel",
+      "avatarValid": true,
+      "controller": "Assets/_Game/Animations/Shared/Chapter01Shared.controller",
+      "rootMotion": false,
+      "clips": [
+        "Idle",
+        "Walking",
+        "Running",
+        "Talking_with_one_hand",
+        "Crying",
+        "Standing Arguing",
+        "Agreeing",
+        "Disagree",
+        "Looking Around",
+        "Picking Up Object",
+        "Stand To Sit",
+        "Sitting Idle",
+        "Sitting Idle",
+        "Sit To Stand",
+        "Sitting Sad",
+        "Talking_with_one_hand",
+        "Crying"
+      ]
+    },
+    {
+      "name": "Messenger",
+      "avatarValid": true,
+      "controller": "Assets/_Game/Animations/Shared/Chapter01Shared.controller",
+      "rootMotion": false,
+      "clips": [
+        "Idle",
+        "Walking",
+        "Running",
+        "Talking_with_one_hand",
+        "Crying",
+        "Standing Arguing",
+        "Agreeing",
+        "Disagree",
+        "Looking Around",
+        "Picking Up Object",
+        "Stand To Sit",
+        "Sitting Idle",
+        "Sitting Idle",
+        "Sit To Stand",
+        "Sitting Sad",
+        "Talking_with_one_hand",
+        "Crying"
+      ]
+    },
+    {
+      "name": "MeThuyKieu_Rigged",
+      "avatarValid": true,
+      "controller": "Assets/_Game/Animations/Shared/Chapter01Shared.controller",
+      "rootMotion": false,
+      "clips": [
+        "Idle",
+        "Walking",
+        "Running",
+        "Talking_with_one_hand",
+        "Crying",
+        "Standing Arguing",
+        "Agreeing",
+        "Disagree",
+        "Looking Around",
+        "Picking Up Object",
+        "Stand To Sit",
+        "Sitting Idle",
+        "Sitting Idle",
+        "Sit To Stand",
+        "Sitting Sad",
+        "Talking_with_one_hand",
+        "Crying"
+      ]
+    },
+    {
+      "name": "Model",
+      "avatarValid": true,
+      "controller": "Assets/_Game/Animations/ThuyKieu/ThuyKieuLocomotion.overrideController",
+      "rootMotion": false,
+      "clips": [
+        "Idle",
+        "TK-Walking",
+        "TK-Running",
+        "Talking_with_one_hand",
+        "Crying",
+        "Standing Arguing",
+        "Agreeing",
+        "Disagree",
+        "Looking Around",
+        "Picking Up Object",
+        "Stand To Sit",
+        "Sitting Idle",
+        "Sitting Idle",
+        "Sit To Stand",
+        "Sitting Sad",
+        "Talking_with_one_hand",
+        "Crying"
+      ]
+    }
+  ],
+  "fbxs": [
+    {
+      "path": "Assets/_Game/Animations/Shared/Agreeing.fbx",
+      "rig": "Human",
+      "runtimeUsed": true,
+      "clips": [
+        {
+          "name": "Agreeing",
+          "human": true,
+          "loop": false,
+          "seconds": 1.83333337
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/Shared/Crying.fbx",
+      "rig": "Human",
+      "runtimeUsed": true,
+      "clips": [
+        {
+          "name": "Crying",
+          "human": true,
+          "loop": true,
+          "seconds": 6.266667
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/Shared/Disagree.fbx",
+      "rig": "Human",
+      "runtimeUsed": true,
+      "clips": [
+        {
+          "name": "Disagree",
+          "human": true,
+          "loop": false,
+          "seconds": 1.80000007
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/Shared/Idle.fbx",
+      "rig": "Human",
+      "runtimeUsed": true,
+      "clips": [
+        {
+          "name": "Idle",
+          "human": true,
+          "loop": true,
+          "seconds": 8.333334
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/Shared/Looking Around.fbx",
+      "rig": "Human",
+      "runtimeUsed": true,
+      "clips": [
+        {
+          "name": "Looking Around",
+          "human": true,
+          "loop": false,
+          "seconds": 6.33333349
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/Shared/Opening_Door.fbx",
+      "rig": "Generic",
+      "runtimeUsed": false,
+      "clips": [
+        {
+          "name": "mixamo.com",
+          "human": false,
+          "loop": false,
+          "seconds": 5.466667
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/Shared/Picking Up Object.fbx",
+      "rig": "Human",
+      "runtimeUsed": true,
+      "clips": [
+        {
+          "name": "Picking Up Object",
+          "human": true,
+          "loop": false,
+          "seconds": 3.4333334
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/Shared/Running.fbx",
+      "rig": "Human",
+      "runtimeUsed": true,
+      "clips": [
+        {
+          "name": "Running",
+          "human": true,
+          "loop": true,
+          "seconds": 0.700000048
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/Shared/Sit To Stand.fbx",
+      "rig": "Human",
+      "runtimeUsed": true,
+      "clips": [
+        {
+          "name": "Sit To Stand",
+          "human": true,
+          "loop": false,
+          "seconds": 2.266667
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/Shared/Sitting Idle.fbx",
+      "rig": "Human",
+      "runtimeUsed": true,
+      "clips": [
+        {
+          "name": "Sitting Idle",
+          "human": true,
+          "loop": true,
+          "seconds": 6.40000057
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/Shared/Sitting Sad.fbx",
+      "rig": "Human",
+      "runtimeUsed": true,
+      "clips": [
+        {
+          "name": "Sitting Sad",
+          "human": true,
+          "loop": true,
+          "seconds": 4.166667
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/Shared/Sitting Talking.fbx",
+      "rig": "Human",
+      "runtimeUsed": false,
+      "clips": [
+        {
+          "name": "Sitting Talking",
+          "human": true,
+          "loop": true,
+          "seconds": 44.06667
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/Shared/Stand To Sit.fbx",
+      "rig": "Human",
+      "runtimeUsed": true,
+      "clips": [
+        {
+          "name": "Stand To Sit",
+          "human": true,
+          "loop": false,
+          "seconds": 2.23333335
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/Shared/Standing Arguing.fbx",
+      "rig": "Human",
+      "runtimeUsed": true,
+      "clips": [
+        {
+          "name": "Standing Arguing",
+          "human": true,
+          "loop": true,
+          "seconds": 20.8000011
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/Shared/Talking_with_one_hand.fbx",
+      "rig": "Human",
+      "runtimeUsed": true,
+      "clips": [
+        {
+          "name": "Talking_with_one_hand",
+          "human": true,
+          "loop": true,
+          "seconds": 3.766667
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/Shared/Thinking.fbx",
+      "rig": "Generic",
+      "runtimeUsed": false,
+      "clips": [
+        {
+          "name": "mixamo.com",
+          "human": false,
+          "loop": false,
+          "seconds": 2.4
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/Shared/Walking.fbx",
+      "rig": "Human",
+      "runtimeUsed": true,
+      "clips": [
+        {
+          "name": "Walking",
+          "human": true,
+          "loop": true,
+          "seconds": 1.03333342
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/ThuyKieu/TK-Idle.fbx",
+      "rig": "Human",
+      "runtimeUsed": false,
+      "clips": [
+        {
+          "name": "TK-Idle",
+          "human": true,
+          "loop": true,
+          "seconds": 16.6333351
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/ThuyKieu/TK-Look Around.fbx",
+      "rig": "Human",
+      "runtimeUsed": false,
+      "clips": [
+        {
+          "name": "TK-Look Around",
+          "human": true,
+          "loop": false,
+          "seconds": 4.4666667
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/ThuyKieu/TK-Picking Up Object.fbx",
+      "rig": "Human",
+      "runtimeUsed": false,
+      "clips": [
+        {
+          "name": "TK-Picking Up Object",
+          "human": true,
+          "loop": false,
+          "seconds": 3.4333334
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/ThuyKieu/TK-Running.fbx",
+      "rig": "Human",
+      "runtimeUsed": true,
+      "clips": [
+        {
+          "name": "TK-Running",
+          "human": true,
+          "loop": true,
+          "seconds": 0.700000048
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/ThuyKieu/TK-Sitting Idle.fbx",
+      "rig": "Human",
+      "runtimeUsed": false,
+      "clips": [
+        {
+          "name": "TK-Sitting Idle",
+          "human": true,
+          "loop": true,
+          "seconds": 6.40000057
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/ThuyKieu/TK-Sitting Talking.fbx",
+      "rig": "Human",
+      "runtimeUsed": false,
+      "clips": [
+        {
+          "name": "TK-Sitting Talking",
+          "human": true,
+          "loop": true,
+          "seconds": 44.9666672
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/ThuyKieu/TK-Talking.fbx",
+      "rig": "Human",
+      "runtimeUsed": false,
+      "clips": [
+        {
+          "name": "TK-Talking",
+          "human": true,
+          "loop": true,
+          "seconds": 10.2666674
+        }
+      ]
+    },
+    {
+      "path": "Assets/_Game/Animations/ThuyKieu/TK-Walking.fbx",
+      "rig": "Human",
+      "runtimeUsed": true,
+      "clips": [
+        {
+          "name": "TK-Walking",
+          "human": true,
+          "loop": true,
+          "seconds": 0.9666667
+        }
+      ]
+    }
+  ],
+  "missingActions": [
+    "True slight bow: search Mixamo Bowing/Standing Greeting",
+    "Handing a document onto a table: search Giving/Handing Over",
+    "Writing/signing at table: search Writing/Signing",
+    "Optional seated-specific crying if upper-body retarget looks unsuitable"
+  ]
+}

@@ -1,0 +1,2 @@
+var asm = typeof(UnityEditor.Editor).Assembly;
+return new {constructors=asm.GetType("UnityEditor.GameViewSize").GetConstructors().Select(m=>m.ToString()).ToArray(),group=asm.GetType("UnityEditor.GameViewSizeGroup").GetMethods().Select(m=>m.ToString()).ToArray(),singleton=asm.GetType("UnityEditor.GameViewSizes").BaseType.GetProperties(System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.NonPublic).Select(p=>p.Name).ToArray()};

@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "checks": [
+    "PASS: 1920x1080 actual GameView resolution",
+    "PASS: 1920x1080 all 222 authored lines fit",
+    "PASS: 1920x1080 Vietnamese glyphs use portable required font",
+    "PASS: 1920x1080 all dialogue panels stay on screen",
+    "PASS: 1920x1080 all choice groups and longest line fit",
+    "PASS: 1920x1080 multiline choices do not overlap",
+    "PASS: 1366x768 actual GameView resolution",
+    "PASS: 1366x768 all 222 authored lines fit",
+    "PASS: 1366x768 Vietnamese glyphs use portable required font",
+    "PASS: 1366x768 all dialogue panels stay on screen",
+    "PASS: 1366x768 all choice groups and longest line fit",
+    "PASS: 1366x768 multiline choices do not overlap"
+  ]
+}

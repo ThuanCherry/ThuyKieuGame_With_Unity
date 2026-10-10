@@ -1,0 +1,1 @@
+return new {player = UnityEngine.Object.FindAnyObjectByType<ThuyKieu.Player.PlayerMovement>().transform.position.ToString(), report = System.IO.File.Exists("Tools/Chapter01/BedroomPlayReport.json") ? System.IO.File.ReadAllText("Tools/Chapter01/BedroomPlayReport.json") : "running"};
